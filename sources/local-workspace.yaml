@@ -1,0 +1,60 @@
+source_id: local_workspace
+name: Local Workspace and Prior Tools
+source_type: local_evidence_repository
+status: active
+priority: 5
+best_for:
+  - Reusing already validated local tools, MCP configs, scripts, logs, and previous experiments.
+  - Checking whether the user or team has already built or tested a route before searching the web.
+  - Recovering practical implementation details from local folders such as tools, work, backups, and eval projects.
+not_good_for:
+  - Discovering unknown external sources by itself.
+  - Confirming current external platform rules.
+  - Market-wide evidence.
+domain_fit:
+  ecommerce: 5
+  engineering: 5
+  consumer_feedback: 2
+  data_collection: 5
+  ai_tools: 5
+access_methods:
+  - method_id: rg_workspace_search
+    description: Search local repo files with rg for platform, tool, source, and failure keywords.
+    speed: fast
+    reliability: 5
+    notes:
+      - Start here when the problem resembles Google Trends, 1688, Reddit, Amazon, MCP, or existing tools.
+  - method_id: inspect_tool_readmes
+    description: Read local tool README, mcp-config examples, scripts, and logs.
+    speed: medium
+    reliability: 5
+    notes:
+      - Local tested workflows are often more reliable than newly found web claims.
+query_patterns:
+  - 'rg -n "{platform}|{tool}|{problem}"'
+  - 'rg -n "MCP|bridge|extension|captcha|429|session|login|cookie"'
+  - 'rg -n "README|mcp-config|start-|bridge|agent" tools work backups'
+source_discovery_patterns:
+  - 'rg --files tools work backups'
+  - 'rg -n "{domain}" tools work backups'
+quality_signals:
+  strong:
+    - Contains runnable scripts, configs, logs, or generated outputs.
+    - Matches a previously tested workflow.
+    - Has backup snapshots before automation or production changes.
+  weak:
+    - Old backup with no current run evidence.
+    - Output files without script or provenance.
+failure_modes:
+  - Local files can be stale relative to live platform changes.
+  - Sparse folders may require memory/session recovery.
+maintenance:
+  check_frequency: monthly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: rg_workspace_search
+    result_quality: high
+    feedback: Local workspace contains concrete Google Trends Edge extension, 1688 Edge extension, and Reddit pool evidence.
