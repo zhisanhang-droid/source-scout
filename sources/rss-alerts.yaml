@@ -1,0 +1,41 @@
+source_id: rss_alerts
+name: RSS Feeds and Alerts
+source_type: feed_monitoring_source
+status: watch
+priority: 2
+best_for:
+  - Periodic discovery of new posts, changelogs, launches, and community updates.
+not_good_for:
+  - Immediate one-off investigation unless feeds already exist.
+domain_fit:
+  ecommerce: 3
+  engineering: 4
+  consumer_feedback: 2
+  data_collection: 2
+  ai_tools: 4
+access_methods:
+  - method_id: feed_monitoring
+    description: Subscribe to RSS feeds or alert queries for high-value sources and recurring domains.
+    speed: slow
+    reliability: 3
+    notes:
+      - Best as background discovery layer.
+query_patterns:
+  - '{domain} RSS'
+  - '{tool} changelog RSS'
+  - '{domain} Google Alert'
+source_discovery_patterns:
+  - '{domain} feed'
+quality_signals:
+  strong:
+    - Feed has consistent signal and links to primary content.
+  weak:
+    - Noisy aggregation feed.
+failure_modes:
+  - Feed disappears or becomes promotional.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
