@@ -1,0 +1,63 @@
+source_id: userscript_ecosystem
+name: Userscript Ecosystem
+source_type: browser_userscript_repository
+status: watch
+priority: 4
+best_for:
+  - Lightweight browser-session automation and page extraction ideas.
+  - Finding Tampermonkey/Greasemonkey scripts for logged-in workflows.
+  - Discovering DOM selectors, page hooks, and UI-level workarounds.
+not_good_for:
+  - Production reliability.
+  - Secure credential handling.
+  - Server-side API contracts.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 2
+  data_collection: 5
+  ai_tools: 2
+access_methods:
+  - method_id: userscript_site_search
+    description: Search userscript repositories and web index results for platform-specific scripts.
+    speed: fast
+    reliability: 3
+    notes:
+      - Use as inspiration for browser extension/content script routes.
+  - method_id: code_inspection
+    description: Inspect scripts for selectors, request endpoints, and browser event patterns.
+    speed: medium
+    reliability: 4
+    notes:
+      - Treat as untrusted code; never run blindly.
+query_patterns:
+  - '{platform} userscript'
+  - '{platform} tampermonkey'
+  - '{platform} greasyfork'
+  - '{platform} script data export'
+source_discovery_patterns:
+  - '{domain} userscript'
+  - '{platform} 油猴脚本'
+  - '{platform} Tampermonkey GitHub'
+quality_signals:
+  strong:
+    - Script has recent updates and comments about current site changes.
+    - Code directly touches the target page or data.
+    - Multiple scripts solve variants of the same workflow.
+  weak:
+    - Obfuscated script.
+    - Old script targeting obsolete UI.
+failure_modes:
+  - Security risk if executed without review.
+  - Breaks frequently when target site changes.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: userscript_site_search
+    result_quality: medium
+    feedback: Added because browser-level MVPs often appear here before formal tools.
+
