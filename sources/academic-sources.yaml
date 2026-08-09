@@ -1,0 +1,47 @@
+source_id: academic_sources
+name: Academic Search and Research Databases
+source_type: academic_research_source
+status: active
+priority: 3
+best_for:
+  - Papers, benchmarks, technical mechanisms, and formal methods.
+  - Understanding why a technique works or fails.
+  - Finding datasets, citations, and survey papers.
+not_good_for:
+  - Fast practical hacks.
+  - Current SaaS/tool reliability.
+  - Community workaround discovery.
+domain_fit:
+  ecommerce: 2
+  engineering: 4
+  consumer_feedback: 1
+  data_collection: 3
+  ai_tools: 4
+access_methods:
+  - method_id: scholarly_search
+    description: Search scholarly indexes and paper repositories by technical mechanism and domain terms.
+    speed: medium
+    reliability: 4
+    notes:
+      - Use when mechanism-level accuracy matters.
+query_patterns:
+  - '{domain} survey paper'
+  - '{technique} arxiv'
+  - '{problem} research paper'
+source_discovery_patterns:
+  - '{domain} academic dataset'
+  - '{domain} benchmark'
+quality_signals:
+  strong:
+    - Recent survey or reproducible benchmark.
+    - Paper links code or dataset.
+  weak:
+    - Preprint with no evidence or citations.
+failure_modes:
+  - Too slow or theoretical for immediate engineering needs.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
