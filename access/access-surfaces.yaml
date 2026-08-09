@@ -1,0 +1,1889 @@
+access_surfaces:
+  - surface_id: local_rg_workspace
+    parent_source: local_workspace
+    name: Local rg workspace search
+    access_type: cli
+    status: active
+    priority: 5
+    login_required: none
+    automation_level: automated
+    best_for: [previous local work, scripts, tool configs, logs, tested workflows]
+    not_good_for: [unknown external sources, current external platform status]
+    entry_points: ['<local workspace root>']
+    query_templates: ['rg -n "{platform}|{tool}|{problem}"', 'rg -n "MCP|bridge|extension|captcha|429|session|login|cookie" tools work backups']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: run rg locally, success_criteria: [returns matching local files], failure_signals: [rg missing, workspace path unavailable]}
+    fallback_surfaces: [local_file_tree_scan, google_operator_search]
+    history: []
+  - surface_id: local_file_tree_scan
+    parent_source: local_workspace
+    name: Local file tree scan
+    access_type: cli
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: automated
+    best_for: [discovering local projects, locating README and config files]
+    not_good_for: [content-level evidence without opening files]
+    entry_points: ['rg --files', 'Get-ChildItem -Recurse']
+    query_templates: ['rg --files tools work backups', 'rg --files | rg "{platform}|{tool}"']
+    retrieval_depth: {title: yes, snippet: no, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: run rg --files, success_criteria: [returns file paths], failure_signals: [empty workspace, permission denied]}
+    fallback_surfaces: [local_rg_workspace]
+    history: []
+  - surface_id: github_repo_search
+    parent_source: github
+    name: GitHub repository search
+    access_type: native_search
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [open-source projects, prior implementations, maintained tools]
+    not_good_for: [failure details hidden in issues, user sentiment]
+    entry_points: ['https://github.com/search?type=repositories']
+    query_templates: ['"{platform}" "{problem}"', '{platform} scraper', '{platform} mcp server', '{tool} alternative']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search GitHub repositories and open candidate repos, success_criteria: [returns repos with date/star/license metadata], failure_signals: [only SEO mirrors, irrelevant repos]}
+    fallback_surfaces: [github_code_search, github_issue_global_search, google_site_github]
+    history: []
+  - surface_id: github_code_search
+    parent_source: github
+    name: GitHub code search
+    access_type: code_search
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [hidden API calls, selectors, content scripts, MCP tool schemas, implementation details]
+    not_good_for: [high-level project discovery without keywords]
+    entry_points: ['https://github.com/search?type=code']
+    query_templates: ['"{endpoint}" language:Python', '"chrome.runtime" "{platform}"', '"content_scripts" "{platform}"', '"Model Context Protocol" "{platform}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search code and open matching files, success_criteria: [code snippets contain exact target terms], failure_signals: [login wall, new code search unavailable, irrelevant token matches]}
+    fallback_surfaces: [github_repo_search, google_site_github_code]
+    history: []
+  - surface_id: github_issue_global_search
+    parent_source: github
+    name: GitHub global issue search
+    access_type: issue_search
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [breakage reports, 429 errors, captcha issues, maintenance warnings, workarounds]
+    not_good_for: [finding brand new repos]
+    entry_points: ['https://github.com/search?type=issues']
+    query_templates: ['"{platform}" "429" is:issue', '"{tool}" "not working" is:issue', '"{platform}" "captcha" is:issue', '"{tool}" "workaround" is:issue']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search open and closed issues, success_criteria: [issue bodies reveal symptoms or fixes], failure_signals: [only dependency noise, no discussion]}
+    fallback_surfaces: [github_repo_issue_search, reddit_google_site_search]
+    history: []
+  - surface_id: github_repo_issue_search
+    parent_source: github
+    name: GitHub repository issue search
+    access_type: issue_search
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [specific tool reliability, closed fixes, maintainer responses]
+    not_good_for: [finding unrelated alternatives]
+    entry_points: ['https://github.com/{owner}/{repo}/issues']
+    query_templates: ['is:issue {error}', 'is:issue 429', 'is:issue captcha', 'is:issue alternative']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search a selected repo's issues, success_criteria: [open or closed issues show current status], failure_signals: [issues disabled, stale unanswered issues]}
+    fallback_surfaces: [github_issue_global_search, github_discussions_search]
+    history: []
+  - surface_id: github_discussions_search
+    parent_source: github
+    name: GitHub Discussions search
+    access_type: native_search
+    status: watch
+    priority: 4
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [usage questions, alternatives, maintainer guidance]
+    not_good_for: [repos without discussions, precise code evidence]
+    entry_points: ['https://github.com/{owner}/{repo}/discussions']
+    query_templates: ['alternative', 'workaround', '{platform}', '{error}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect discussions for selected repos, success_criteria: [discussion threads have maintainer/user replies], failure_signals: [discussions disabled]}
+    fallback_surfaces: [github_repo_issue_search, reddit_google_site_search]
+    history: []
+  - surface_id: github_pull_request_search
+    parent_source: github
+    name: GitHub pull request search
+    access_type: issue_search
+    status: active
+    priority: 4
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [why an implementation changed, compatibility fixes, deprecated approach replacement]
+    not_good_for: [broad source discovery]
+    entry_points: ['https://github.com/{owner}/{repo}/pulls']
+    query_templates: ['is:pr {platform}', 'is:pr 429', 'is:pr captcha', 'is:pr browser']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search PRs in active repos, success_criteria: [merged PR explains implementation change], failure_signals: [no PR history, squash without context]}
+    fallback_surfaces: [github_code_search, github_repo_issue_search]
+    history: []
+  - surface_id: github_topics_search
+    parent_source: github
+    name: GitHub topics search
+    access_type: directory
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [ecosystem discovery, adjacent repos, common tags]
+    not_good_for: [current tool reliability]
+    entry_points: ['https://github.com/topics/{topic}']
+    query_templates: ['{domain}', '{platform}', 'mcp-server', 'browser-extension', 'web-scraping']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: open topic page and inspect active repos, success_criteria: [topic shows relevant maintained repos], failure_signals: [topic too broad or spammy]}
+    fallback_surfaces: [github_repo_search, osint_directory_search]
+    history: []
+  - surface_id: github_releases_search
+    parent_source: github
+    name: GitHub releases and changelog
+    access_type: native_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [maintenance recency, breaking changes, feature availability]
+    not_good_for: [community workarounds]
+    entry_points: ['https://github.com/{owner}/{repo}/releases']
+    query_templates: ['release notes {tool}', '{tool} changelog']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect release dates and notes, success_criteria: [recent releases mention relevant changes], failure_signals: [no release history, stale project]}
+    fallback_surfaces: [github_pull_request_search, github_repo_issue_search]
+    history: []
+  - surface_id: google_site_github
+    parent_source: google_search
+    name: Google site search for GitHub
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding GitHub pages when GitHub search ranking is weak]
+    not_good_for: [fresh private/unindexed issues]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:github.com "{platform}" "{problem}"', 'site:github.com "{tool}" "workaround"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: web search site:github.com, success_criteria: [results include real GitHub repos/issues], failure_signals: [SEO mirrors, stale cache]}
+    fallback_surfaces: [github_repo_search, github_issue_global_search]
+    history: []
+  - surface_id: google_site_github_code
+    parent_source: google_search
+    name: Google search for GitHub code pages
+    access_type: web_search
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding indexed code snippets outside GitHub code search]
+    not_good_for: [complete code search]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:github.com "{code_term}" "{platform}"', 'site:github.com "{endpoint}" "{tool}"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: run site search and open GitHub files, success_criteria: [indexed result opens to code file], failure_signals: [only README matches]}
+    fallback_surfaces: [github_code_search]
+    history: []
+  - surface_id: reddit_google_site_search
+    parent_source: reddit
+    name: Google site search for Reddit
+    access_type: web_search
+    status: active
+    priority: 5
+    login_required: none
+    automation_level: semi_automated
+    best_for: [older Reddit threads, alternatives, complaints, workaround vocabulary]
+    not_good_for: [fresh posts, full comment retrieval]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:reddit.com "{tool}" "alternative"', 'site:reddit.com "{platform}" "blocked"', 'site:reddit.com "{problem}" "workaround"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site:reddit.com search then open thread, success_criteria: [finds relevant thread and readable comments], failure_signals: [search result snippets only, deleted thread, comments inaccessible]}
+    fallback_surfaces: [reddit_native_global_search, reddit_subreddit_search]
+    history: []
+  - surface_id: reddit_native_global_search
+    parent_source: reddit
+    name: Reddit native global search
+    access_type: native_search
+    status: needs_validation
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [fresh Reddit posts, current subreddit discussions, exact Reddit-native ranking]
+    not_good_for: [older indexed posts where Reddit search underperforms]
+    entry_points: ['https://www.reddit.com/search/']
+    query_templates: ['{tool} alternative', '{platform} scraping', '{problem} workaround', '{api} rate limit']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: open Reddit search manually and compare to Google site search, success_criteria: [fresh relevant threads visible], failure_signals: [login wall, poor relevance, blocked UI]}
+    fallback_surfaces: [reddit_google_site_search, reddit_local_mcp_search]
+    history: []
+  - surface_id: reddit_subreddit_search
+    parent_source: reddit
+    name: Subreddit scoped search
+    access_type: native_search
+    status: needs_validation
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [community-specific consensus, domain vocabulary, repeated complaints]
+    not_good_for: [unknown community discovery before subreddits are known]
+    entry_points: ['https://www.reddit.com/r/{subreddit}/search/']
+    query_templates: ['{problem}', '{tool}', 'alternative', 'worth it', 'blocked']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search inside known subreddit and inspect thread comments, success_criteria: [multiple relevant posts in same community], failure_signals: [wrong subreddit, sparse results]}
+    fallback_surfaces: [reddit_google_site_search, reddit_subreddit_discovery]
+    history: []
+  - surface_id: reddit_subreddit_discovery
+    parent_source: reddit
+    name: Subreddit discovery
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding where practitioners discuss a domain]
+    not_good_for: [answering the problem directly]
+    entry_points: ['https://www.google.com/search', 'https://www.reddit.com/search/']
+    query_templates: ['{domain} subreddit', 'site:reddit.com/r "{domain}" "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search and inspect active subreddit recency, success_criteria: [active subreddit with relevant recent posts], failure_signals: [inactive community, generic subreddit]}
+    fallback_surfaces: [community_forum_site_search]
+    history: []
+  - surface_id: reddit_comment_deep_read
+    parent_source: reddit
+    name: Reddit comment deep read
+    access_type: comments
+    status: needs_validation
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [real tradeoffs, hidden tools, corrections, failure details, alternatives]
+    not_good_for: [fast scanning, strict facts without corroboration]
+    entry_points: ['https://www.reddit.com/r/{subreddit}/comments/{id}']
+    query_templates: ['open top threads from reddit_google_site_search or reddit_subreddit_search']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: open thread and read sorted comments plus controversial/new, success_criteria: [comments reveal concrete tools or experiences], failure_signals: [deleted comments, shallow jokes, inaccessible thread]}
+    fallback_surfaces: [reddit_local_mcp_comments, community_forum_site_search]
+    history: []
+  - surface_id: reddit_user_history_trace
+    parent_source: reddit
+    name: Reddit user history trace
+    access_type: comments
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [identifying experienced practitioners and repeated tool recommendations]
+    not_good_for: [privacy-sensitive use, broad evidence]
+    entry_points: ['https://www.reddit.com/user/{username}/']
+    query_templates: ['trace author of high-quality comment only when relevant']
+    retrieval_depth: {title: yes, snippet: partial, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect public user history for domain consistency, success_criteria: [user has repeated domain-specific posts], failure_signals: [deleted profile, off-topic history]}
+    fallback_surfaces: [reddit_comment_deep_read]
+    history: []
+  - surface_id: reddit_local_mcp_search
+    parent_source: reddit
+    name: Local Reddit MCP search
+    access_type: local_tool
+    status: watch
+    priority: 4
+    login_required: unknown
+    automation_level: automated
+    best_for: [local automated Reddit retrieval, repeatable topic pool workflows]
+    not_good_for: [unverified complete comment retrieval]
+    entry_points: ['work\reddit-pool-v2', 'reddit-mcp-eval']
+    query_templates: ['use local README/tool commands after inspection']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: run local smoke test before relying on output, success_criteria: [returns posts and expected metadata], failure_signals: [API auth failure, missing comments, stale cached data]}
+    fallback_surfaces: [reddit_google_site_search, reddit_native_global_search]
+    history: []
+  - surface_id: reddit_local_mcp_comments
+    parent_source: reddit
+    name: Local Reddit MCP comment retrieval
+    access_type: local_tool
+    status: watch
+    priority: 4
+    login_required: unknown
+    automation_level: automated
+    best_for: [comment-layer data when local tool is healthy]
+    not_good_for: [tasks where comments completeness is unverified]
+    entry_points: ['work\reddit-pool-v2', 'reddit-mcp-eval']
+    query_templates: ['inspect local connector docs for comment fetch command']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: compare local comments against visible Reddit thread, success_criteria: [comment count and top comments match thread], failure_signals: [missing comment tree, deleted-only output, rate limit]}
+    fallback_surfaces: [reddit_comment_deep_read]
+    history: []
+  - surface_id: reddit_third_party_api_search
+    parent_source: reddit
+    name: Reddit third-party API search
+    access_type: api
+    status: needs_validation
+    priority: 3
+    login_required: unknown
+    automation_level: automated
+    best_for: [fallback automated Reddit data access]
+    not_good_for: [free reliable full coverage without testing]
+    entry_points: ['RapidAPI Reddit APIs', 'commercial Reddit data APIs']
+    query_templates: ['Reddit comments API', 'Reddit scraper API', 'Reddit search API']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: inspect API sample response and test target thread if credentials exist, success_criteria: [sample includes comments/body/metadata required], failure_signals: [pricing wall, stale API, missing comments]}
+    fallback_surfaces: [rapidapi_platform_search, reddit_local_mcp_search]
+    history: []
+  - surface_id: hackernews_algolia_search
+    parent_source: community_forums
+    name: Hacker News Algolia search
+    access_type: native_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [developer opinions, tool launches, technical debates, startup/product perspectives]
+    not_good_for: [deep step-by-step implementation unless linked]
+    entry_points: ['https://hn.algolia.com/']
+    query_templates: ['{tool}', '{platform} scraping', '{problem} workaround', '{domain} tools']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search HN Algolia and open discussion, success_criteria: [comments contain technical tradeoffs or linked tools], failure_signals: [only launch fluff, no relevant comments]}
+    fallback_surfaces: [google_site_hn, independent_blog_search]
+    history: []
+  - surface_id: google_site_hn
+    parent_source: google_search
+    name: Google site search for Hacker News
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding HN threads via exact web queries]
+    not_good_for: [fresh HN items]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:news.ycombinator.com "{tool}" "{problem}"', 'site:news.ycombinator.com "{platform}" "scraping"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site search then open HN thread, success_criteria: [thread contains relevant comments], failure_signals: [dead links, unrelated thread]}
+    fallback_surfaces: [hackernews_algolia_search]
+    history: []
+  - surface_id: stackoverflow_search
+    parent_source: community_forums
+    name: Stack Overflow search
+    access_type: native_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [specific programming errors, API usage, library issues]
+    not_good_for: [broad tool discovery, business workflows]
+    entry_points: ['https://stackoverflow.com/search']
+    query_templates: ['[{tag}] {error}', '"{platform}" "{error}"', '"{tool}" "not working"']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect accepted plus recent answers, success_criteria: [answer has code and comments/updates], failure_signals: [closed as obsolete, outdated answers]}
+    fallback_surfaces: [google_site_stackoverflow, github_issue_global_search]
+    history: []
+  - surface_id: google_site_stackoverflow
+    parent_source: google_search
+    name: Google site search for Stack Overflow
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding Stack Overflow answers with exact errors]
+    not_good_for: [fresh questions]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:stackoverflow.com "{error}" "{tool}"', 'site:stackoverflow.com "{platform}" "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: exact error site search, success_criteria: [opens relevant SO question], failure_signals: [unrelated snippets]}
+    fallback_surfaces: [stackoverflow_search]
+    history: []
+  - surface_id: v2ex_site_search
+    parent_source: community_forums
+    name: V2EX site search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [Chinese developer tool opinions, scraping practices, local workflow discussion]
+    not_good_for: [official docs, structured code]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:v2ex.com "{platform}" crawler', 'site:v2ex.com "{tool}" alternative', 'site:v2ex.com "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site search and open thread replies, success_criteria: [thread replies include practical experiences], failure_signals: [old shallow thread]}
+    fallback_surfaces: [community_forum_site_search]
+    history: []
+  - surface_id: zhihu_site_search
+    parent_source: community_forums
+    name: Zhihu site search
+    access_type: web_search
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [Chinese explanatory content, tool comparisons, practitioner opinion]
+    not_good_for: [unbiased evidence, code-level implementation]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:zhihu.com "{platform}" data collection', 'site:zhihu.com "{tool}" alternative']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site search and open answers if accessible, success_criteria: [answer body readable and specific], failure_signals: [login wall, generic content]}
+    fallback_surfaces: [v2ex_site_search, juejin_site_search]
+    history: []
+  - surface_id: juejin_site_search
+    parent_source: community_forums
+    name: Juejin site search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [Chinese frontend/backend tutorials, Playwright/browser automation notes]
+    not_good_for: [source reliability without testing]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:juejin.cn "{platform}" Playwright', 'site:juejin.cn "{tool}" crawler']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open article and inspect code/date, success_criteria: [article has code and date], failure_signals: [generic copied tutorial]}
+    fallback_surfaces: [cnblogs_site_search, csdn_site_search]
+    history: []
+  - surface_id: cnblogs_site_search
+    parent_source: community_forums
+    name: CNBlogs site search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [Chinese technical writeups, older automation posts, code snippets]
+    not_good_for: [fresh platform behavior]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:cnblogs.com "{platform}" logged in session', 'site:cnblogs.com "{tool}" crawler']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open post and inspect code/date, success_criteria: [specific commands or code], failure_signals: [outdated UI, copied content]}
+    fallback_surfaces: [juejin_site_search, csdn_site_search]
+    history: []
+  - surface_id: csdn_site_search
+    parent_source: community_forums
+    name: CSDN site search
+    access_type: web_search
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [Chinese error messages, code snippets, breadth search]
+    not_good_for: [high signal without filtering]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:csdn.net "{platform}" captcha', 'site:csdn.net "{tool}" crawler']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open post and check specificity, success_criteria: [post includes specific environment and code], failure_signals: [paywall, copied low-quality article]}
+    fallback_surfaces: [juejin_site_search, cnblogs_site_search]
+    history: []
+  - surface_id: forum_52pojie_search
+    parent_source: community_forums
+    name: 52pojie forum search
+    access_type: web_search
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [Windows desktop tools, plugins, reverse-engineering-adjacent workflows, Chinese practitioner hacks]
+    not_good_for: [compliance-safe final evidence without review]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:52pojie.cn "{platform}" plugin', 'site:52pojie.cn "{tool}" script']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site search and inspect accessible thread, success_criteria: [thread has practical tool discussion], failure_signals: [login wall, risky executable only]}
+    fallback_surfaces: [v2ex_site_search, userscript_greasyfork_search]
+    history: []
+  - surface_id: community_forum_site_search
+    parent_source: community_forums
+    name: Generic community forum site search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [discovering relevant niche forums]
+    not_good_for: [direct answer without follow-up]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['"{domain}" forum "{problem}"', 'site:{forum_domain} "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search forum domain and inspect active threads, success_criteria: [active domain-specific forum found], failure_signals: [dead forum, SEO spam]}
+    fallback_surfaces: [google_broad_web_search]
+    history: []
+  - surface_id: google_broad_web_search
+    parent_source: google_search
+    name: Broad Google web search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [initial source discovery, cross-source routing, exact phrase matching]
+    not_good_for: [final evidence alone, hidden communities]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['"{problem}" "{platform}" workaround', '"{problem}" "{platform}" alternative', '"{domain}" "tools directory"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: run query and classify result types, success_criteria: [returns multiple independent source types], failure_signals: [SEO/SaaS-only result page]}
+    fallback_surfaces: [google_operator_search, osint_directory_search]
+    history: []
+  - surface_id: google_operator_search
+    parent_source: google_search
+    name: Google operator search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [routing into specific sites, excluding SaaS noise, exact phrases]
+    not_good_for: [sources not indexed by Google]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:{domain} "{problem}"', '"{exact_error}" -site:{noisy_domain}', 'intitle:"{tool}" "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: compare operator results against native source search, success_criteria: [operator improves relevance], failure_signals: [indexed snippets only]}
+    fallback_surfaces: [google_broad_web_search]
+    history: []
+  - surface_id: bing_broad_web_search
+    parent_source: google_search
+    name: Bing broad web search
+    access_type: web_search
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: semi_automated
+    best_for: [alternate web index, fallback when Google misses pages]
+    not_good_for: [source validation alone]
+    entry_points: ['https://www.bing.com/search']
+    query_templates: ['"{problem}" "{platform}" workaround', 'site:reddit.com "{problem}"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: compare results against Google for same query, success_criteria: [finds unique useful pages], failure_signals: [duplicate low-value results]}
+    fallback_surfaces: [google_broad_web_search]
+    history: []
+  - surface_id: official_docs_search
+    parent_source: official_docs
+    name: Official docs search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [official API availability, auth, rate limits, terms, changelogs]
+    not_good_for: [unofficial workarounds, real-world reliability]
+    entry_points: ['official developer docs', 'official help center']
+    query_templates: ['{platform} developer docs {feature}', '{platform} API changelog', '{platform} rate limit docs']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: open official docs and check dates/scopes, success_criteria: [docs state feature/rule clearly], failure_signals: [marketing page only, alpha docs without access]}
+    fallback_surfaces: [official_changelog_search, github_issue_global_search]
+    history: []
+  - surface_id: official_changelog_search
+    parent_source: official_docs
+    name: Official changelog and status search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [deprecations, policy changes, outage/status, API changes]
+    not_good_for: [community workarounds]
+    entry_points: ['official changelog', 'official status page']
+    query_templates: ['{platform} changelog {api}', '{platform} status {feature}', '{platform} deprecated {api}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect official dated changelog/status, success_criteria: [dated entry confirms change], failure_signals: [undated docs, no history]}
+    fallback_surfaces: [official_docs_search, reddit_google_site_search]
+    history: []
+  - surface_id: chrome_web_store_search
+    parent_source: chrome_web_store
+    name: Chrome Web Store search
+    access_type: marketplace_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: manual
+    best_for: [browser extension-shaped solutions, install counts, reviews, permissions]
+    not_good_for: [source code transparency]
+    entry_points: ['https://chromewebstore.google.com/']
+    query_templates: ['{platform} scraper', '{platform} exporter', '{problem} extension', '{domain} data']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search store and inspect listing reviews/update date/permissions, success_criteria: [listing matches workflow and has recent activity], failure_signals: [stale extension, vague listing, hidden cloud dependency]}
+    fallback_surfaces: [chrome_web_store_google_site_search, edge_addons_search]
+    history: []
+  - surface_id: chrome_web_store_google_site_search
+    parent_source: chrome_web_store
+    name: Google site search for Chrome Web Store
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding Chrome extensions when store search is weak]
+    not_good_for: [full review inspection]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['site:chromewebstore.google.com "{platform}" scraper', 'site:chromewebstore.google.com "{problem}" extension']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: site search then open listing, success_criteria: [finds relevant listing], failure_signals: [removed listing, irrelevant extension]}
+    fallback_surfaces: [chrome_web_store_search]
+    history: []
+  - surface_id: edge_addons_search
+    parent_source: chrome_web_store
+    name: Microsoft Edge Add-ons search
+    access_type: marketplace_search
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [Edge-specific extension availability, compatibility with user's browser]
+    not_good_for: [large ecosystem breadth compared with Chrome]
+    entry_points: ['https://microsoftedge.microsoft.com/addons/']
+    query_templates: ['{platform} scraper', '{platform} exporter', '{problem} extension']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search Edge Add-ons and inspect listing, success_criteria: [extension exists and recently updated], failure_signals: [sparse results, stale listing]}
+    fallback_surfaces: [chrome_web_store_search]
+    history: []
+  - surface_id: userscript_greasyfork_search
+    parent_source: userscript_ecosystem
+    name: GreasyFork userscript search
+    access_type: native_search
+    status: watch
+    priority: 4
+    login_required: none
+    automation_level: manual
+    best_for: [Tampermonkey scripts, DOM extraction ideas, browser-session MVPs]
+    not_good_for: [trusted production code]
+    entry_points: ['https://greasyfork.org/']
+    query_templates: ['{platform}', '{platform} export', '{platform} helper', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search scripts and inspect code/update date/comments, success_criteria: [script targets current platform and code is readable], failure_signals: [obsolete selectors, obfuscated/risky code]}
+    fallback_surfaces: [userscript_github_search, chrome_web_store_search]
+    history: []
+  - surface_id: userscript_github_search
+    parent_source: userscript_ecosystem
+    name: GitHub userscript search
+    access_type: code_search
+    status: watch
+    priority: 4
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [auditable userscripts, selector patterns, browser workflow prototypes]
+    not_good_for: [install counts or user reviews]
+    entry_points: ['https://github.com/search?type=code']
+    query_templates: ['"{platform}" "userscript"', '"{platform}" "Tampermonkey"', '"@match" "{platform}"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect script code and repo freshness, success_criteria: [script contains relevant @match and selectors], failure_signals: [dead repo, unsafe script]}
+    fallback_surfaces: [userscript_greasyfork_search]
+    history: []
+  - surface_id: apify_actor_search
+    parent_source: apify
+    name: Apify actor search
+    access_type: marketplace_search
+    status: active
+    priority: 4
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [commercialized scrapers, sample output schemas, fallback data acquisition]
+    not_good_for: [logged-in custom edge cases without paid test]
+    entry_points: ['https://apify.com/store']
+    query_templates: ['{platform} scraper', '{platform} trends', '{platform} comments', '{platform} product data']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect actor schema, sample output, last run/update, success_criteria: [sample output contains target fields], failure_signals: [stale actor, no sample, clone spam]}
+    fallback_surfaces: [rapidapi_platform_search, github_repo_search]
+    history: []
+  - surface_id: rapidapi_platform_search
+    parent_source: rapidapi_marketplaces
+    name: RapidAPI platform search
+    access_type: marketplace_search
+    status: active
+    priority: 3
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [third-party API availability, endpoint shape, pricing fallback]
+    not_good_for: [hidden implementation reliability]
+    entry_points: ['https://rapidapi.com/search/']
+    query_templates: ['{platform}', '{platform} data', '{platform} scraper', '{platform} comments']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect endpoint sample response and activity, success_criteria: [sample response has required fields], failure_signals: [pricing wall, no sample, stale API]}
+    fallback_surfaces: [apify_actor_search, npm_package_search]
+    history: []
+  - surface_id: npm_package_search
+    parent_source: package_registries
+    name: npm package search
+    access_type: marketplace_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [JavaScript SDKs, scrapers, MCP servers, browser automation packages]
+    not_good_for: [runtime reliability without GitHub follow-up]
+    entry_points: ['https://www.npmjs.com/search']
+    query_templates: ['{platform} scraper', '{platform} mcp', '{tool} wrapper', '{platform} playwright']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect version date, downloads, repository link, success_criteria: [recent release and repo link], failure_signals: [no repo, stale package, install-only spam]}
+    fallback_surfaces: [github_repo_search, pypi_package_search]
+    history: []
+  - surface_id: pypi_package_search
+    parent_source: package_registries
+    name: PyPI package search
+    access_type: marketplace_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [Python clients, scrapers, data access libraries]
+    not_good_for: [anti-bot reliability without testing]
+    entry_points: ['https://pypi.org/search/']
+    query_templates: ['{platform} scraper', '{platform} unofficial api', '{tool} client']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect release history and project links, success_criteria: [recent release and docs/repo], failure_signals: [stale package, no examples]}
+    fallback_surfaces: [github_repo_search, npm_package_search]
+    history: []
+  - surface_id: dockerhub_image_search
+    parent_source: package_registries
+    name: Docker Hub image search
+    access_type: marketplace_search
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [packaged services, self-hostable tools, deployment clues]
+    not_good_for: [source quality without repo link]
+    entry_points: ['https://hub.docker.com/search']
+    query_templates: ['{tool}', '{platform} scraper', '{domain} mcp']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect image update date and linked repo, success_criteria: [recent image with source/docs], failure_signals: [unmaintained image, no source]}
+    fallback_surfaces: [github_repo_search]
+    history: []
+  - surface_id: mcp_registry_search
+    parent_source: mcp_registries
+    name: MCP registry search
+    access_type: directory
+    status: watch
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [AI-callable tools, MCP wrappers, tool schemas]
+    not_good_for: [data quality proof without testing]
+    entry_points: ['public MCP registries', 'awesome MCP server lists']
+    query_templates: ['{platform} MCP server', '{domain} MCP tools', '{data_source} model context protocol']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect registry entry and linked repo/tool schema, success_criteria: [transport/auth/tools documented], failure_signals: [demo only, no auth story, stale repo]}
+    fallback_surfaces: [github_repo_search, npm_package_search]
+    history: []
+  - surface_id: mcp_github_topic_search
+    parent_source: mcp_registries
+    name: GitHub MCP topic search
+    access_type: directory
+    status: watch
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding MCP servers not in registries]
+    not_good_for: [runtime availability]
+    entry_points: ['https://github.com/topics/mcp-server']
+    query_templates: ['mcp-server {platform}', 'model-context-protocol {domain}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect topic repos and docs, success_criteria: [repo has MCP config and tools], failure_signals: [empty wrappers, stale repo]}
+    fallback_surfaces: [mcp_registry_search, github_repo_search]
+    history: []
+  - surface_id: producthunt_search
+    parent_source: tool_directories
+    name: Product Hunt search
+    access_type: directory
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [new tools, product categories, launch comments]
+    not_good_for: [reliability proof or implementation detail]
+    entry_points: ['https://www.producthunt.com/search']
+    query_templates: ['{domain}', '{problem}', '{tool} alternative']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect launches/comments, success_criteria: [relevant tools with external links], failure_signals: [promotional-only results]}
+    fallback_surfaces: [alternativeto_search, newsletter_archive_search]
+    history: []
+  - surface_id: alternativeto_search
+    parent_source: tool_directories
+    name: AlternativeTo search
+    access_type: directory
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [tool alternatives, category vocabulary, replacement options]
+    not_good_for: [deep engineering workarounds]
+    entry_points: ['https://alternativeto.net/']
+    query_templates: ['{tool}', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search tool and inspect alternatives plus comments, success_criteria: [alternatives map category], failure_signals: [irrelevant consumer apps]}
+    fallback_surfaces: [producthunt_search, google_broad_web_search]
+    history: []
+  - surface_id: g2_capterra_search
+    parent_source: tool_directories
+    name: G2 and Capterra search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [B2B SaaS categories, review snippets, vendor landscape]
+    not_good_for: [grassroots hacks, open-source implementation]
+    entry_points: ['https://www.g2.com/', 'https://www.capterra.com/']
+    query_templates: ['{domain} software', '{tool} reviews', '{problem} software']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect category pages and reviews if accessible, success_criteria: [category lists relevant vendors], failure_signals: [gated reviews, affiliate noise]}
+    fallback_surfaces: [tool_directory_google_search]
+    history: []
+  - surface_id: tool_directory_google_search
+    parent_source: tool_directories
+    name: Google search for tool directories
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [discovering niche tool directories and lists]
+    not_good_for: [source validation]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['"{domain}" "tools directory"', '"{problem}" "software alternatives"', '"{domain}" "tool list"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search and classify directory quality, success_criteria: [directory links to primary tool pages], failure_signals: [affiliate-only list]}
+    fallback_surfaces: [producthunt_search, alternativeto_search]
+    history: []
+  - surface_id: independent_blog_search
+    parent_source: independent_blogs
+    name: Independent developer blog search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [deep writeups, case studies, architecture, postmortems]
+    not_good_for: [broad consensus]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['"{problem}" "writeup"', '"{platform}" "{problem}" "case study"', '"{platform}" "{problem}" "postmortem"', '"{platform}" "{problem}" "architecture"']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open post and inspect date/code/links, success_criteria: [specific environment, commands, failures, outcomes], failure_signals: [generic tutorial, no date, no evidence]}
+    fallback_surfaces: [hackernews_algolia_search, github_issue_global_search]
+    history: []
+  - surface_id: osint_directory_search
+    parent_source: osint_directories
+    name: OSINT directory search
+    access_type: directory
+    status: watch
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [discovering new source types, search operators, source evaluation methods]
+    not_good_for: [direct product solution]
+    entry_points: ['OSINT Framework', 'awesome-osint lists']
+    query_templates: ['awesome osint tools', 'OSINT source discovery methodology', 'OSINT search operators']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect directory categories and update recency, success_criteria: [finds reusable source categories], failure_signals: [dead tool dump, no maintenance]}
+    fallback_surfaces: [google_broad_web_search]
+    history: []
+  - surface_id: ai_research_agent_repo_search
+    parent_source: ai_research_agents
+    name: AI research agent repository search
+    access_type: native_search
+    status: watch
+    priority: 4
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [research workflows, query expansion, citation verification patterns]
+    not_good_for: [domain facts]
+    entry_points: ['https://github.com/search?type=repositories']
+    query_templates: ['open source deep research agent', 'AI research agent source citations', 'planner executor research agent']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect repo prompts/docs/issues, success_criteria: [repo exposes search/evidence workflow], failure_signals: [demo only, no source logs]}
+    fallback_surfaces: [github_repo_search, independent_blog_search]
+    history: []
+  - surface_id: youtube_search
+    parent_source: video_tutorials
+    name: YouTube search
+    access_type: video
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [hands-on workflows, current UI walkthroughs, hidden toolchains]
+    not_good_for: [fast extraction, precise citation without transcript]
+    entry_points: ['https://www.youtube.com/results']
+    query_templates: ['{platform} scraping tutorial', '{platform} automation workflow', '{tool} setup walkthrough']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect transcript/chapters/links/date, success_criteria: [video shows exact workflow and links resources], failure_signals: [no transcript, promotional overview]}
+    fallback_surfaces: [independent_blog_search, bilibili_search]
+    history: []
+  - surface_id: bilibili_search
+    parent_source: video_tutorials
+    name: Bilibili search
+    access_type: video
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [Chinese operational tutorials, desktop/browser workflows, local tool demos]
+    not_good_for: [structured citations, code verification]
+    entry_points: ['https://search.bilibili.com/']
+    query_templates: ['{platform} 爬虫', '{platform} 自动化', '{tool} 教程']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect video date, comments, linked resources, success_criteria: [recent operational demo], failure_signals: [no details, outdated UI]}
+    fallback_surfaces: [youtube_search, juejin_site_search]
+    history: []
+  - surface_id: newsletter_archive_search
+    parent_source: newsletters_tool_radars
+    name: Newsletter archive search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [new tools, emerging vocabulary, curated source discovery]
+    not_good_for: [urgent bug resolution]
+    entry_points: ['newsletter archive pages']
+    query_templates: ['{domain} newsletter tools', '{domain} weekly tools', '{domain} tool radar']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: inspect archive update cadence and primary links, success_criteria: [archive surfaces unique primary sources], failure_signals: [affiliate-heavy, stale archive]}
+    fallback_surfaces: [tool_directory_google_search]
+    history: []
+  - surface_id: discord_public_discovery
+    parent_source: community_forums
+    name: Public Discord community discovery
+    access_type: directory
+    status: needs_validation
+    priority: 3
+    login_required: required
+    automation_level: manual
+    best_for: [fast-moving tool communities, support channels, private practitioner knowledge]
+    not_good_for: [automated citation, public evidence]
+    entry_points: ['Discord invite directories', 'tool docs community links']
+    query_templates: ['{tool} Discord', '{domain} Discord community', '{platform} Discord support']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: find invite and inspect public channel quality manually, success_criteria: [active searchable community with relevant channels], failure_signals: [dead invite, gated server, no search access]}
+    fallback_surfaces: [reddit_google_site_search, github_discussions_search]
+    history: []
+  - surface_id: telegram_public_discovery
+    parent_source: community_forums
+    name: Public Telegram group discovery
+    access_type: directory
+    status: needs_validation
+    priority: 2
+    login_required: required
+    automation_level: manual
+    best_for: [Chinese/international practitioner groups, fast-moving informal workflows]
+    not_good_for: [auditable evidence, automated search]
+    entry_points: ['Telegram public search', 'web-indexed invite links']
+    query_templates: ['{domain} Telegram group', '{tool} Telegram', '{platform} Telegram']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: manually inspect group activity and relevance, success_criteria: [active domain-specific group], failure_signals: [spam group, no search access]}
+    fallback_surfaces: [discord_public_discovery, reddit_google_site_search]
+    history: []
+  - surface_id: slack_community_discovery
+    parent_source: community_forums
+    name: Public Slack community discovery
+    access_type: directory
+    status: needs_validation
+    priority: 2
+    login_required: required
+    automation_level: manual
+    best_for: [professional communities, tool support, practitioner networking]
+    not_good_for: [public citation, fast automated retrieval]
+    entry_points: ['community pages', 'tool docs Slack links']
+    query_templates: ['{domain} Slack community', '{tool} Slack support']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: identify join path and search capability, success_criteria: [active searchable workspace], failure_signals: [closed invite, no archive]}
+    fallback_surfaces: [discord_public_discovery, github_discussions_search]
+    history: []
+  - surface_id: exa_search_api
+    parent_source: google_search
+    name: Exa search API
+    access_type: api
+    status: needs_validation
+    priority: 3
+    login_required: required
+    automation_level: automated
+    best_for: [alternate semantic web search, source discovery automation]
+    not_good_for: [free manual browsing without key]
+    entry_points: ['https://exa.ai/']
+    query_templates: ['semantic query: {problem}', 'find similar sources for {domain}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: check credential availability and compare results to web search, success_criteria: [returns unique relevant primary sources], failure_signals: [no key, low relevance]}
+    fallback_surfaces: [google_broad_web_search, bing_broad_web_search]
+    history: []
+  - surface_id: perplexity_manual_search
+    parent_source: google_search
+    name: Perplexity manual search
+    access_type: web_search
+    status: needs_validation
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [quick broad source discovery with citations, alternate retrieval perspective]
+    not_good_for: [unverified final answer, private/local source access]
+    entry_points: ['https://www.perplexity.ai/']
+    query_templates: ['Find practical solutions for {problem}, prioritize GitHub issues and community cases.']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: compare cited sources against Source Scout channels, success_criteria: [citations include useful non-generic sources], failure_signals: [citation drift, generic SaaS results]}
+    fallback_surfaces: [google_operator_search, ai_research_agent_repo_search]
+    history: []
+  - surface_id: phind_search
+    parent_source: google_search
+    name: Phind developer search
+    access_type: web_search
+    status: needs_validation
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [developer-focused answers, code and docs routing]
+    not_good_for: [community sentiment, Chinese forums]
+    entry_points: ['https://www.phind.com/']
+    query_templates: ['{tool} {error} workaround', '{platform} scraper implementation']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: compare citations to GitHub/SO results, success_criteria: [finds relevant technical sources], failure_signals: [generic docs only]}
+    fallback_surfaces: [github_issue_global_search, stackoverflow_search]
+    history: []
+  - surface_id: huggingface_spaces_search
+    parent_source: tool_directories
+    name: Hugging Face Spaces search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: semi_automated
+    best_for: [AI demos, open-source prototypes, datasets/tool demos]
+    not_good_for: [production reliability]
+    entry_points: ['https://huggingface.co/spaces']
+    query_templates: ['{domain}', '{tool}', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect Space files and linked repo, success_criteria: [running demo or accessible source], failure_signals: [sleeping/broken space, no source]}
+    fallback_surfaces: [github_repo_search]
+    history: []
+  - surface_id: kaggle_dataset_search
+    parent_source: tool_directories
+    name: Kaggle dataset search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [public datasets, benchmark data, examples]
+    not_good_for: [current live platform data]
+    entry_points: ['https://www.kaggle.com/datasets']
+    query_templates: ['{domain}', '{platform}', '{data_type}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect dataset date/license/files, success_criteria: [dataset fields match target need], failure_signals: [stale dataset, unclear license]}
+    fallback_surfaces: [google_operator_search]
+    history: []
+  - surface_id: dataset_google_search
+    parent_source: google_search
+    name: Dataset-focused web search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [finding public datasets, benchmarks, CSV/API dumps]
+    not_good_for: [hidden live data]
+    entry_points: ['https://www.google.com/search']
+    query_templates: ['"{domain}" dataset', '"{platform}" dataset csv', '"{data_type}" public dataset']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open dataset source and inspect date/license/schema, success_criteria: [dataset is downloadable or queryable], failure_signals: [dead link, no schema]}
+    fallback_surfaces: [kaggle_dataset_search]
+    history: []
+  - surface_id: google_scholar_search
+    parent_source: academic_sources
+    name: Google Scholar search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [papers, citation chains, academic terminology]
+    not_good_for: [fast practical engineering fixes]
+    entry_points: ['https://scholar.google.com/']
+    query_templates: ['"{problem}" "{domain}"', '"{technique}" survey', '"{platform}" scraping paper']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect paper date/citations/full text availability, success_criteria: [relevant paper with abstract and citation metadata], failure_signals: [paywall only, unrelated academic terms]}
+    fallback_surfaces: [arxiv_search, semantic_scholar_search]
+    history: []
+  - surface_id: semantic_scholar_search
+    parent_source: academic_sources
+    name: Semantic Scholar search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [paper abstracts, citation graph, related papers]
+    not_good_for: [non-academic practitioner cases]
+    entry_points: ['https://www.semanticscholar.org/']
+    query_templates: ['{problem} {domain}', '{technique} benchmark', '{domain} survey']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect abstract/citations, success_criteria: [paper graph reveals useful related work], failure_signals: [low relevance, no accessible abstract]}
+    fallback_surfaces: [google_scholar_search, arxiv_search]
+    history: []
+  - surface_id: arxiv_search
+    parent_source: academic_sources
+    name: arXiv search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [AI, ML, scraping-related research, fresh technical preprints]
+    not_good_for: [validated production reliability]
+    entry_points: ['https://arxiv.org/search/']
+    query_templates: ['{technique}', '{problem}', '{domain}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect abstract/pdf/code link, success_criteria: [paper is relevant and accessible], failure_signals: [too theoretical, no implementation]}
+    fallback_surfaces: [semantic_scholar_search, github_repo_search]
+    history: []
+  - surface_id: paperswithcode_search
+    parent_source: academic_sources
+    name: Papers with Code search
+    access_type: directory
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [papers with code, benchmarks, datasets]
+    not_good_for: [non-ML business workflows]
+    entry_points: ['https://paperswithcode.com/']
+    query_templates: ['{task}', '{dataset}', '{technique}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect task page, repo link, dataset, success_criteria: [task has code and benchmark/dataset], failure_signals: [paper without code, stale repo]}
+    fallback_surfaces: [github_repo_search, semantic_scholar_search]
+    history: []
+  - surface_id: google_patents_search
+    parent_source: patent_databases
+    name: Google Patents search
+    access_type: web_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [product mechanisms, assignees, diagrams, prior art]
+    not_good_for: [demand validation]
+    entry_points: ['https://patents.google.com/']
+    query_templates: ['{product}', '{mechanism}', '{assignee} {product}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect patent drawings/claims/assignee/date, success_criteria: [patent matches product mechanism], failure_signals: [broad irrelevant patent family]}
+    fallback_surfaces: [uspto_patent_search, google_operator_search]
+    history: []
+  - surface_id: uspto_patent_search
+    parent_source: patent_databases
+    name: USPTO patent search
+    access_type: web_search
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: manual
+    best_for: [official US patent records]
+    not_good_for: [fast broad search UX]
+    entry_points: ['https://ppubs.uspto.gov/pubwebapp/']
+    query_templates: ['{product}', '{assignee}', '{classification}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search official USPTO page and inspect record, success_criteria: [official record retrievable], failure_signals: [poor search UX, session timeout]}
+    fallback_surfaces: [google_patents_search]
+    history: []
+  - surface_id: cpsc_recall_search
+    parent_source: government_databases
+    name: CPSC recall search
+    access_type: web_search
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [US consumer product recalls, safety risk signals]
+    not_good_for: [non-US regulatory facts]
+    entry_points: ['https://www.cpsc.gov/Recalls']
+    query_templates: ['{product}', '{brand}', '{category}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search recall database and inspect recall details, success_criteria: [recall record includes hazard/date/company], failure_signals: [no records, broad category noise]}
+    fallback_surfaces: [google_operator_search, official_docs_search]
+    history: []
+  - surface_id: regulations_gov_search
+    parent_source: government_databases
+    name: Regulations.gov search
+    access_type: web_search
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [US regulatory dockets, rulemaking, public comments]
+    not_good_for: [quick product workaround]
+    entry_points: ['https://www.regulations.gov/']
+    query_templates: ['{product}', '{standard}', '{agency} {topic}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search docket and inspect date/agency, success_criteria: [relevant docket or rule found], failure_signals: [irrelevant comments, no docket]}
+    fallback_surfaces: [official_docs_search]
+    history: []
+  - surface_id: astm_standard_search
+    parent_source: standards_sources
+    name: ASTM standard search
+    access_type: web_search
+    status: watch
+    priority: 4
+    login_required: none
+    automation_level: manual
+    best_for: [US product test standards, standard identifiers]
+    not_good_for: [full text without payment]
+    entry_points: ['https://www.astm.org/']
+    query_templates: ['{product} ASTM', '{category} ASTM standard']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search standard title/scope and identifier, success_criteria: [standard ID and scope identified], failure_signals: [paywalled full text only]}
+    fallback_surfaces: [google_operator_search, cpsc_recall_search]
+    history: []
+  - surface_id: iso_standard_search
+    parent_source: standards_sources
+    name: ISO standard search
+    access_type: web_search
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [international standards, standard identifiers]
+    not_good_for: [free full text]
+    entry_points: ['https://www.iso.org/search.html']
+    query_templates: ['{product}', '{category}', '{standard_topic}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search ISO and inspect standard scope/status, success_criteria: [standard title/status found], failure_signals: [paywall, broad results]}
+    fallback_surfaces: [google_operator_search]
+    history: []
+  - surface_id: shopify_app_store_search
+    parent_source: app_plugin_marketplaces
+    name: Shopify App Store search
+    access_type: marketplace_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [ecommerce app workflows, reviews, integration patterns]
+    not_good_for: [open-source implementation]
+    entry_points: ['https://apps.shopify.com/']
+    query_templates: ['{workflow}', '{data_source}', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect listing reviews/pricing/permissions, success_criteria: [workflow exists with reviews], failure_signals: [stale listing, no reviews]}
+    fallback_surfaces: [tool_directory_google_search]
+    history: []
+  - surface_id: wordpress_plugin_search
+    parent_source: app_plugin_marketplaces
+    name: WordPress plugin search
+    access_type: marketplace_search
+    status: active
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [plugin-shaped workflows, install counts, support issues]
+    not_good_for: [non-WordPress workflows]
+    entry_points: ['https://wordpress.org/plugins/']
+    query_templates: ['{workflow}', '{tool}', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect active installs, last update, support threads, success_criteria: [recent plugin with active installs], failure_signals: [abandoned plugin, unresolved support issues]}
+    fallback_surfaces: [github_repo_search]
+    history: []
+  - surface_id: figma_plugin_search
+    parent_source: app_plugin_marketplaces
+    name: Figma plugin search
+    access_type: marketplace_search
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [design workflow plugins, UI automation ideas]
+    not_good_for: [data collection backends]
+    entry_points: ['https://www.figma.com/community/plugins']
+    query_templates: ['{workflow}', '{tool}', '{problem}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect plugin page/community signals, success_criteria: [plugin solves workflow and is usable], failure_signals: [login wall, no update signal]}
+    fallback_surfaces: [tool_directory_google_search]
+    history: []
+  - surface_id: x_twitter_search
+    parent_source: social_platforms
+    name: X/Twitter search
+    access_type: native_search
+    status: needs_validation
+    priority: 3
+    login_required: required
+    automation_level: manual
+    best_for: [fresh tool launches, practitioner threads, complaints]
+    not_good_for: [reliable public retrieval without login]
+    entry_points: ['https://x.com/search']
+    query_templates: ['"{tool}" workaround', '"{domain}" "tool"', '"{problem}"']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: test logged-in search and inspect thread links, success_criteria: [finds relevant recent threads with links], failure_signals: [login wall, spam results]}
+    fallback_surfaces: [reddit_google_site_search, google_broad_web_search]
+    history: []
+  - surface_id: linkedin_post_search
+    parent_source: social_platforms
+    name: LinkedIn post search
+    access_type: native_search
+    status: needs_validation
+    priority: 2
+    login_required: required
+    automation_level: manual
+    best_for: [B2B practitioner posts, vendor/customer stories]
+    not_good_for: [open technical details]
+    entry_points: ['https://www.linkedin.com/search/results/content/']
+    query_templates: ['{domain} {workflow}', '{tool} case study', '{problem}']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: logged-in search and inspect author/context, success_criteria: [specific practitioner or vendor case], failure_signals: [sales spam, login wall]}
+    fallback_surfaces: [independent_blog_search, tool_directory_google_search]
+    history: []
+  - surface_id: tiktok_search
+    parent_source: social_platforms
+    name: TikTok search
+    access_type: native_search
+    status: needs_validation
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [consumer product demos, trend vocabulary, creator usage signals]
+    not_good_for: [engineering source discovery]
+    entry_points: ['https://www.tiktok.com/search']
+    query_templates: ['{product}', '{problem}', '{category} hack']
+    retrieval_depth: {title: partial, snippet: partial, body: partial, comments: partial, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: manual search and inspect top videos/comments, success_criteria: [real usage videos and recurring complaints], failure_signals: [trend noise, inaccessible comments]}
+    fallback_surfaces: [youtube_search, reddit_google_site_search]
+    history: []
+  - surface_id: rss_feed_discovery
+    parent_source: rss_alerts
+    name: RSS feed discovery
+    access_type: rss
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: semi_automated
+    best_for: [background monitoring, changelogs, repeated source discovery]
+    not_good_for: [one-off urgent search]
+    entry_points: ['site feed URLs', 'RSS autodiscovery']
+    query_templates: ['{site} RSS', '{tool} changelog RSS', '{domain} feed']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: fetch feed URL and inspect recent items, success_criteria: [valid feed with recent relevant items], failure_signals: [dead feed, promotional feed]}
+    fallback_surfaces: [newsletter_archive_search]
+    history: []
+  - surface_id: google_alert_query
+    parent_source: rss_alerts
+    name: Google Alert query
+    access_type: manual
+    status: watch
+    priority: 2
+    login_required: required
+    automation_level: manual
+    best_for: [recurring discovery of new pages for stable queries]
+    not_good_for: [immediate search execution]
+    entry_points: ['https://www.google.com/alerts']
+    query_templates: ['"{domain}" "{problem}"', '"{tool}" "alternative"', '"{platform}" "API"']
+    retrieval_depth: {title: yes, snippet: yes, body: no, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: create/test alert query manually, success_criteria: [alert returns relevant new results over time], failure_signals: [too noisy, no results]}
+    fallback_surfaces: [google_operator_search]
+    history: []
+  - surface_id: theresanaiforthat_search
+    parent_source: ai_tool_directories
+    name: There Is An AI For That search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: manual
+    best_for: [AI tool name discovery, broad category scan]
+    not_good_for: [reliability or implementation]
+    entry_points: ['https://theresanaiforthat.com/']
+    query_templates: ['{workflow}', '{domain}', '{data_source}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search directory and follow primary tool links, success_criteria: [finds relevant tool names to verify elsewhere], failure_signals: [SEO noise, no primary links]}
+    fallback_surfaces: [tool_directory_google_search, producthunt_search]
+    history: []
+  - surface_id: futurepedia_search
+    parent_source: ai_tool_directories
+    name: Futurepedia search
+    access_type: directory
+    status: watch
+    priority: 2
+    login_required: optional
+    automation_level: manual
+    best_for: [AI tool category discovery]
+    not_good_for: [technical evidence]
+    entry_points: ['https://www.futurepedia.io/']
+    query_templates: ['{workflow}', '{domain}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search and follow primary tool pages, success_criteria: [finds candidate tools for verification], failure_signals: [affiliate-only listing]}
+    fallback_surfaces: [theresanaiforthat_search, producthunt_search]
+    history: []
+  - surface_id: openuserjs_search
+    parent_source: userscript_ecosystem
+    name: OpenUserJS userscript search
+    access_type: native_search
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [alternate userscript discovery, older browser workflow scripts]
+    not_good_for: [large active ecosystem compared with GreasyFork]
+    entry_points: ['https://openuserjs.org/']
+    query_templates: ['{platform}', '{workflow}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search scripts and inspect update date/code, success_criteria: [relevant readable userscript found], failure_signals: [stale script, low activity]}
+    fallback_surfaces: [userscript_greasyfork_search, userscript_github_search]
+    history: []
+  - surface_id: scriptcat_search
+    parent_source: userscript_ecosystem
+    name: ScriptCat script search
+    access_type: native_search
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: manual
+    best_for: [Chinese userscript ecosystem, browser automation scripts]
+    not_good_for: [final reliability without code review]
+    entry_points: ['https://scriptcat.org/']
+    query_templates: ['{platform}', '{workflow}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search and inspect script code/update/comments, success_criteria: [script targets current platform], failure_signals: [obsolete or unsafe script]}
+    fallback_surfaces: [userscript_greasyfork_search, userscript_github_search]
+    history: []
+  - surface_id: gist_userscript_search
+    parent_source: userscript_ecosystem
+    name: GitHub Gist userscript search
+    access_type: web_search
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: semi_automated
+    best_for: [one-off scripts, prototypes, hidden snippets]
+    not_good_for: [maintenance signal]
+    entry_points: ['https://gist.github.com/']
+    query_templates: ['site:gist.github.com "{platform}" "userscript"', 'site:gist.github.com "{platform}" "Tampermonkey"']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: site search and inspect gist date/code, success_criteria: [gist code matches workflow], failure_signals: [obsolete one-off snippet]}
+    fallback_surfaces: [userscript_github_search]
+    history: []
+  - surface_id: official_mcp_registry_search
+    parent_source: mcp_registries
+    name: Official MCP registry search
+    access_type: directory
+    status: needs_validation
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [official or semi-official MCP server discovery, server metadata]
+    not_good_for: [runtime validation without install]
+    entry_points: ['https://modelcontextprotocol.io/']
+    query_templates: ['{platform} MCP', '{domain} server', '{tool} model context protocol']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search registry/directory and follow repo link, success_criteria: [server entry has repo/docs/tool list], failure_signals: [stale or missing implementation]}
+    fallback_surfaces: [mcp_github_topic_search, mcp_registry_search]
+    history: []
+  - surface_id: pulsemcp_search
+    parent_source: mcp_registries
+    name: PulseMCP search
+    access_type: directory
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [third-party MCP server directory, categories, trending servers]
+    not_good_for: [official verification]
+    entry_points: ['https://www.pulsemcp.com/']
+    query_templates: ['{platform}', '{domain}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search directory and follow repo/doc links, success_criteria: [entry has live repo/docs], failure_signals: [directory-only listing without implementation]}
+    fallback_surfaces: [official_mcp_registry_search, mcp_github_topic_search]
+    history: []
+  - surface_id: smithery_registry_search
+    parent_source: mcp_registries
+    name: Smithery MCP registry search
+    access_type: directory
+    status: needs_validation
+    priority: 3
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [MCP server discovery and install metadata]
+    not_good_for: [source reliability without repo follow-up]
+    entry_points: ['https://smithery.ai/']
+    query_templates: ['{platform}', '{domain}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect listing, install instructions, and linked repo, success_criteria: [install path and repo are available], failure_signals: [no source link, stale server]}
+    fallback_surfaces: [mcp_github_topic_search, npm_package_search]
+    history: []
+  - surface_id: osint_framework_browse
+    parent_source: osint_directories
+    name: OSINT Framework browse
+    access_type: directory
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: manual
+    best_for: [source category discovery, access-type hints, search operator ideas]
+    not_good_for: [direct answer to engineering task]
+    entry_points: ['https://osintframework.com/']
+    query_templates: ['browse relevant category manually']
+    retrieval_depth: {title: yes, snippet: partial, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open framework and inspect category/tool links, success_criteria: [finds new source categories or tools], failure_signals: [dead links, category too broad]}
+    fallback_surfaces: [awesome_osint_github_search, google_broad_web_search]
+    history: []
+  - surface_id: awesome_osint_github_search
+    parent_source: osint_directories
+    name: awesome-osint GitHub list search
+    access_type: directory
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [curated OSINT source/tool discovery, source type expansion]
+    not_good_for: [current availability without link checking]
+    entry_points: ['https://github.com/jivoi/awesome-osint']
+    query_templates: ['search within README for {domain}', 'search categories for {source_type}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect README categories and linked tools, success_criteria: [list has relevant maintained links], failure_signals: [dead links, giant unsorted list]}
+    fallback_surfaces: [osint_framework_browse]
+    history: []
+  - surface_id: osint_combine_training_search
+    parent_source: osint_directories
+    name: OSINT Combine training/resource search
+    access_type: web_search
+    status: watch
+    priority: 2
+    login_required: none
+    automation_level: manual
+    best_for: [OSINT methodology, validation concepts, source evaluation training]
+    not_good_for: [specific tool discovery at scale]
+    entry_points: ['https://www.osintcombine.com/']
+    query_templates: ['OSINT source validation', 'OSINT source discovery methodology']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: inspect resource pages for reusable methodology, success_criteria: [method improves Source Scout workflow], failure_signals: [course-only page with no actionable material]}
+    fallback_surfaces: [osint_framework_browse]
+    history: []
+  - surface_id: amazon_native_search
+    parent_source: ecommerce_data_sources
+    name: Amazon native search
+    access_type: native_search
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [current listings, competitor discovery, title/image/price scan]
+    not_good_for: [historical sales or full keyword data]
+    entry_points: ['https://www.amazon.com/']
+    query_templates: ['{keyword}', '{product}', '{category keyword}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search Amazon and inspect current results manually, success_criteria: [relevant listings and prices visible], failure_signals: [captcha, region mismatch, sponsored noise]}
+    fallback_surfaces: [sorftime_mcp_keyword_probe, google_operator_search]
+    history: []
+  - surface_id: amazon_review_read
+    parent_source: ecommerce_data_sources
+    name: Amazon review reading
+    access_type: comments
+    status: active
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [JTBD clues, complaints, quality issues, use cases, objections]
+    not_good_for: [complete review export without tool/API]
+    entry_points: ['https://www.amazon.com/product-reviews/{asin}']
+    query_templates: ['{asin} reviews', '{asin} negative reviews']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: yes, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: open review pages and inspect recent/critical reviews, success_criteria: [review text, rating, date visible], failure_signals: [review wall, region/language mismatch]}
+    fallback_surfaces: [amazon_review_tool_export, reddit_google_site_search]
+    history: []
+  - surface_id: amazon_review_tool_export
+    parent_source: ecommerce_data_sources
+    name: Amazon review export tools
+    access_type: local_tool
+    status: watch
+    priority: 4
+    login_required: unknown
+    automation_level: semi_automated
+    best_for: [bulk review analysis, JTBD inputs, competitor review comparison]
+    not_good_for: [unverified current completeness]
+    entry_points: ['local files', 'browser extensions', 'review export SaaS/tools']
+    query_templates: ['{asin} review export', '{asin} reviews xlsx']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: compare exported review count/sample against visible Amazon reviews, success_criteria: [export contains recent reviews and required fields], failure_signals: [missing recent reviews, malformed dates]}
+    fallback_surfaces: [amazon_review_read]
+    history: []
+  - surface_id: sorftime_mcp_keyword_probe
+    parent_source: ecommerce_data_sources
+    name: Sorftime MCP keyword/product probe
+    access_type: local_tool
+    status: active
+    priority: 5
+    login_required: unknown
+    automation_level: automated
+    best_for: [Amazon keyword volume, competitor metrics, category research when MCP is configured]
+    not_good_for: [non-Amazon marketplaces, unconfigured environments]
+    entry_points: ['configured Sorftime MCP', 'amz-platform/lib/sorftime.py']
+    query_templates: ['{keyword}', '{asin}', '{category keyword}']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: run local Sorftime probe or MCP call and inspect returned fields, success_criteria: [volume/CPC/competition/product fields returned], failure_signals: [missing credentials, stale local skill, rate limit]}
+    fallback_surfaces: [amazon_native_search, google_broad_web_search]
+    history: []
+  - surface_id: keepa_product_lookup
+    parent_source: ecommerce_data_sources
+    name: Keepa product lookup
+    access_type: web_search
+    status: needs_validation
+    priority: 4
+    login_required: optional
+    automation_level: manual
+    best_for: [Amazon price history, BSR history, offer history, seller changes]
+    not_good_for: [free complete access without account/API]
+    entry_points: ['https://keepa.com/']
+    query_templates: ['{asin}', '{product} Keepa']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search ASIN in Keepa and inspect chart/data access, success_criteria: [history chart or key metrics visible], failure_signals: [login wall, no ASIN match]}
+    fallback_surfaces: [amazon_native_search, sorftime_mcp_keyword_probe]
+    history: []
+  - surface_id: 1688_native_search
+    parent_source: ecommerce_data_sources
+    name: 1688 native search
+    access_type: native_search
+    status: watch
+    priority: 5
+    login_required: optional
+    automation_level: manual
+    best_for: [Chinese supplier discovery, cost range, product variants, factory keywords]
+    not_good_for: [stable automation without browser/session handling]
+    entry_points: ['https://www.1688.com/']
+    query_templates: ['{product_cn}', '{product_keyword}', '{material} {product}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search in real browser profile and inspect offer pages, success_criteria: [price/moq/supplier/product images visible], failure_signals: [login/verification wall, region block]}
+    fallback_surfaces: [1688_edge_extension_bridge, alibaba_supplier_search]
+    history: []
+  - surface_id: 1688_edge_extension_bridge
+    parent_source: ecommerce_data_sources
+    name: 1688 Edge extension bridge
+    access_type: local_tool
+    status: active
+    priority: 5
+    login_required: required
+    automation_level: semi_automated
+    best_for: [real-browser 1688 offer extraction, logged-in session reuse, human verification fallback]
+    not_good_for: [server-only automation]
+    entry_points: ['tools\\1688-edge-extension']
+    query_templates: ['use local README and bridge scripts']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: run extension bridge against visible 1688 page and compare page fields, success_criteria: [bridge returns price/supplier/product fields], failure_signals: [extension disconnected, bridge unavailable, page selector changed]}
+    fallback_surfaces: [1688_native_search]
+    history: []
+  - surface_id: alibaba_supplier_search
+    parent_source: ecommerce_data_sources
+    name: Alibaba supplier search
+    access_type: native_search
+    status: watch
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [international supplier discovery, English product terms, MOQ/price clues]
+    not_good_for: [domestic China factory cost accuracy]
+    entry_points: ['https://www.alibaba.com/']
+    query_templates: ['{product}', '{material} {product}', '{category} supplier']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: partial}
+    validation: {last_checked: 2026-08-09, method: search and inspect supplier/listing details, success_criteria: [supplier/product/MOQ/price range visible], failure_signals: [RFQ-only page, thin listing]}
+    fallback_surfaces: [1688_native_search]
+    history: []
+  - surface_id: importyeti_supplier_search
+    parent_source: ecommerce_data_sources
+    name: ImportYeti supplier/company search
+    access_type: web_search
+    status: needs_validation
+    priority: 3
+    login_required: optional
+    automation_level: manual
+    best_for: [supplier/import relationship clues, US importer/manufacturer discovery]
+    not_good_for: [real-time pricing]
+    entry_points: ['https://www.importyeti.com/']
+    query_templates: ['{brand}', '{company}', '{product category}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search company/brand and inspect shipment/supplier fields, success_criteria: [importer/supplier relationship visible], failure_signals: [login wall, no company match]}
+    fallback_surfaces: [google_operator_search, alibaba_supplier_search]
+    history: []
+  - surface_id: mcp_official_registry_api
+    parent_source: mcp_registries
+    name: Official MCP registry API and catalog
+    access_type: api
+    status: needs_validation
+    priority: 5
+    login_required: none
+    automation_level: automated
+    best_for: [machine-readable MCP server discovery, install metadata, registry-backed source expansion]
+    not_good_for: [proving a server works in this local Codex environment]
+    entry_points: ['https://registry.modelcontextprotocol.io/', 'https://github.com/modelcontextprotocol/registry']
+    query_templates: ['{platform}', '{domain}', '{tool}', '{capability}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: query/open registry and follow package or repository metadata, success_criteria: [registry returns server entries with package/repo/install fields], failure_signals: [registry API unavailable, entry without source or install path]}
+    fallback_surfaces: [smithery_registry_search, pulsemcp_search, mcp_github_topic_search]
+    history: []
+  - surface_id: mcprun_directory_search
+    parent_source: mcp_registries
+    name: MCP.run directory search
+    access_type: directory
+    status: needs_validation
+    priority: 3
+    login_required: optional
+    automation_level: semi_automated
+    best_for: [hosted MCP servers, remote server discovery, deployment-oriented MCP entries]
+    not_good_for: [source-level trust without repository follow-up]
+    entry_points: ['https://www.mcp.run/']
+    query_templates: ['{platform}', '{domain}', '{tool}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search directory and inspect linked docs/repo/hosted endpoint, success_criteria: [entry exposes usage path and source or vendor], failure_signals: [login wall, hosted-only entry without docs]}
+    fallback_surfaces: [official_mcp_registry_search, mcp_github_topic_search]
+    history: []
+  - surface_id: mcp_so_directory_search
+    parent_source: mcp_registries
+    name: MCP.so directory search
+    access_type: directory
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [broad third-party MCP server discovery, tags, adjacent capability names]
+    not_good_for: [quality proof without repo/issues validation]
+    entry_points: ['https://mcp.so/']
+    query_templates: ['{platform}', '{domain}', '{tool}', '{capability}']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search directory and follow official/repo links, success_criteria: [entry has install docs and current repo], failure_signals: [thin listing, stale duplicate entry]}
+    fallback_surfaces: [official_mcp_registry_search, smithery_registry_search]
+    history: []
+  - surface_id: github_awesome_browser_automation
+    parent_source: github
+    name: GitHub awesome browser automation lists
+    access_type: directory
+    status: needs_validation
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [discovering Playwright/Puppeteer/Selenium/CDP projects, adjacent browser-agent vocabulary]
+    not_good_for: [specific runtime reliability without repo follow-up]
+    entry_points: ['https://github.com/search?q=awesome+browser+automation&type=repositories']
+    query_templates: ['awesome browser automation', 'awesome puppeteer playwright', 'awesome web scraping browser automation']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search awesome lists and open linked repos/issues, success_criteria: [list points to maintained browser automation tools], failure_signals: [abandoned list, link farm]}
+    fallback_surfaces: [github_repo_search, osint_directory_search]
+    history: []
+  - surface_id: github_browser_use_ecosystem
+    parent_source: ai_research_agents
+    name: browser-use ecosystem search
+    access_type: code_search
+    status: needs_validation
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [AI browser agent patterns, Playwright state handling, task automation examples]
+    not_good_for: [authenticated target-site scraping without local setup]
+    entry_points: ['https://github.com/browser-use/browser-use']
+    query_templates: ['browser-use {platform}', 'browser-use scraping', 'browser-use persistent context', 'browser-use extension']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect repo docs/examples/issues for target workflow, success_criteria: [example or issue maps to target site workflow], failure_signals: [only generic demo, no session/captcha handling]}
+    fallback_surfaces: [github_repo_search, github_issue_global_search, reddit_google_site_search]
+    history: []
+  - surface_id: github_crawl4ai_ecosystem
+    parent_source: ai_research_agents
+    name: Crawl4AI ecosystem search
+    access_type: code_search
+    status: needs_validation
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [LLM-ready crawling, markdown extraction, browser-backed scraping examples]
+    not_good_for: [logged-in consumer sites without profile/session strategy]
+    entry_points: ['https://github.com/unclecode/crawl4ai']
+    query_templates: ['crawl4ai {platform}', 'crawl4ai playwright', 'crawl4ai login', 'crawl4ai session']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect docs/examples/issues for target platform or access pattern, success_criteria: [example covers dynamic page/session/extraction], failure_signals: [no authenticated examples, stale issue reports]}
+    fallback_surfaces: [github_repo_search, pypi_package_search]
+    history: []
+  - surface_id: github_scrapegraphai_ecosystem
+    parent_source: ai_research_agents
+    name: ScrapeGraphAI ecosystem search
+    access_type: code_search
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [LLM extraction pipelines, scraper examples, AI-assisted schema extraction]
+    not_good_for: [anti-bot bypass proof]
+    entry_points: ['https://github.com/ScrapeGraphAI/Scrapegraph-ai']
+    query_templates: ['scrapegraphai {platform}', 'scrapegraphai browser', 'scrapegraphai login']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect docs/examples/issues and follow package metadata, success_criteria: [working extraction example with maintained release], failure_signals: [API-only example, broken install issues]}
+    fallback_surfaces: [github_crawl4ai_ecosystem, pypi_package_search]
+    history: []
+  - surface_id: github_stagehand_browser_agent
+    parent_source: ai_research_agents
+    name: Stagehand browser agent search
+    access_type: code_search
+    status: needs_validation
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [AI-assisted Playwright automation, resilient selectors, web task execution examples]
+    not_good_for: [data extraction at scale without custom workflow]
+    entry_points: ['https://github.com/browserbase/stagehand']
+    query_templates: ['stagehand {platform}', 'stagehand scraping', 'stagehand login', 'stagehand extract']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: inspect docs/examples/issues for comparable workflow and browser execution constraints, success_criteria: [example supports navigation/extraction on dynamic sites], failure_signals: [requires unavailable hosted browser, no local profile path]}
+    fallback_surfaces: [github_browser_use_ecosystem, github_repo_search]
+    history: []
+  - surface_id: chrome_debugging_protocol_docs
+    parent_source: official_docs
+    name: Chrome DevTools Protocol docs
+    access_type: directory
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [real-browser automation concepts, network inspection, persistent session bridge design]
+    not_good_for: [ready-made target-site scraper discovery]
+    entry_points: ['https://chromedevtools.github.io/devtools-protocol/']
+    query_templates: ['Network domain', 'Runtime evaluate', 'Target attach', 'Fetch interception']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: open protocol docs and map feature to browser bridge requirement, success_criteria: [relevant protocol domain has current method docs], failure_signals: [browser version mismatch, unsupported target type]}
+    fallback_surfaces: [github_awesome_browser_automation, playwright_official_docs_search]
+    history: []
+  - surface_id: playwright_official_docs_search
+    parent_source: official_docs
+    name: Playwright official docs search
+    access_type: directory
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [persistent profile, storage state, headful browser, locator strategy, network capture]
+    not_good_for: [target-site legality or community workaround evidence]
+    entry_points: ['https://playwright.dev/docs/']
+    query_templates: ['persistent context', 'storage state', 'headful', 'chrome extension', 'CDP session']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: no, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search docs for required browser capability and test small local script when needed, success_criteria: [official doc covers exact browser/session capability], failure_signals: [browser channel unsupported, extension unavailable in headless mode]}
+    fallback_surfaces: [github_issue_global_search, chrome_debugging_protocol_docs]
+    history: []
+  - surface_id: hackernews_algolia_comments_search
+    parent_source: community_forums
+    name: Hacker News Algolia comments search
+    access_type: comments
+    status: active
+    priority: 4
+    login_required: none
+    automation_level: semi_automated
+    best_for: [developer experience, tool comparisons, failure anecdotes, launch discussions]
+    not_good_for: [complete tutorial-level implementation detail]
+    entry_points: ['https://hn.algolia.com/']
+    query_templates: ['{tool} scraping', '{platform} API alternative', '{domain} browser automation', '{tool} MCP']
+    retrieval_depth: {title: yes, snippet: yes, body: partial, comments: yes, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search HN Algolia and open comments/story links, success_criteria: [threads include practitioner comments or tool links], failure_signals: [only launch hype, no operational detail]}
+    fallback_surfaces: [reddit_google_site_search, google_operator_search]
+    history: []
+  - surface_id: stackoverflow_tag_search
+    parent_source: community_forums
+    name: Stack Overflow tag and error search
+    access_type: native_search
+    status: watch
+    priority: 3
+    login_required: none
+    automation_level: semi_automated
+    best_for: [specific errors, SDK behavior, language implementation details]
+    not_good_for: [gray-area scraping workarounds, current SaaS market map]
+    entry_points: ['https://stackoverflow.com/search']
+    query_templates: ['[{language}] {tool} {error}', '{platform} 429 scraper', 'playwright persistent context chrome extension']
+    retrieval_depth: {title: yes, snippet: yes, body: yes, comments: partial, metadata: yes}
+    validation: {last_checked: 2026-08-09, method: search native or with site:stackoverflow.com and open accepted/high-score answers, success_criteria: [answer includes runnable code or clear failure cause], failure_signals: [closed as off-topic, old answer broken by platform change]}
+    fallback_surfaces: [google_operator_search, github_issue_global_search]
+    history: []
