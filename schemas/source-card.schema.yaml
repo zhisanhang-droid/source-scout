@@ -1,0 +1,45 @@
+source_id: string
+name: string
+source_type: string
+status: active | watch | stale | deprecated
+priority: 1-5
+best_for:
+  - string
+not_good_for:
+  - string
+domain_fit:
+  ecommerce: 1-5
+  engineering: 1-5
+  consumer_feedback: 1-5
+  data_collection: 1-5
+  ai_tools: 1-5
+access_methods:
+  - method_id: string
+    description: string
+    speed: fast | medium | slow
+    reliability: 1-5
+    notes:
+      - string
+query_patterns:
+  - string
+source_discovery_patterns:
+  - string
+quality_signals:
+  strong:
+    - string
+  weak:
+    - string
+failure_modes:
+  - string
+maintenance:
+  check_frequency: weekly | monthly | quarterly | ad_hoc
+  last_checked: YYYY-MM-DD
+  known_failures:
+    - string
+history:
+  - date: YYYY-MM-DD
+    task: string
+    access_method: string
+    result_quality: high | medium | low | stale | blocked
+    feedback: string
+
