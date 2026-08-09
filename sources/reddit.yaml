@@ -1,0 +1,74 @@
+source_id: reddit
+name: Reddit
+source_type: user_community
+status: active
+priority: 5
+best_for:
+  - Real user complaints and practical limitations.
+  - Tool alternatives, hidden demand, and failure stories.
+  - Platform policy friction, API limits, scraping pain, and workaround clues.
+  - Discovering niche communities and vocabulary.
+not_good_for:
+  - Official facts.
+  - Complete engineering implementation.
+  - Strictly verified current policy.
+domain_fit:
+  ecommerce: 4
+  engineering: 4
+  consumer_feedback: 5
+  data_collection: 4
+  ai_tools: 4
+access_methods:
+  - method_id: google_site_search
+    description: "Use Google or another web search engine with site operators for older, indexable posts."
+    speed: fast
+    reliability: 4
+    notes:
+      - Often better than Reddit native search for old posts.
+  - method_id: subreddit_search
+    description: Search inside relevant subreddits once communities are identified.
+    speed: medium
+    reliability: 4
+    notes:
+      - Read comments, not only titles and original posts.
+  - method_id: local_reddit_tool
+    description: Use local Reddit MCP or pool tools when configured and healthy.
+    speed: fast
+    reliability: 3
+    notes:
+      - If comments are missing or stale, record the failure and fall back to web search/API.
+query_patterns:
+  - 'site:reddit.com "{tool}" "alternative"'
+  - 'site:reddit.com "{platform}" "scraping"'
+  - 'site:reddit.com "{platform}" "API" "rate limit"'
+  - 'site:reddit.com "{problem}" "workaround"'
+  - 'site:reddit.com "{tool}" "worth it"'
+  - 'site:reddit.com "{platform}" "blocked"'
+source_discovery_patterns:
+  - '{domain} subreddit'
+  - 'site:reddit.com "{domain}" "{problem}"'
+  - 'site:reddit.com/r "{tool}"'
+quality_signals:
+  strong:
+    - Multiple users report the same failure or workaround.
+    - Comments include implementation details, tool names, or tradeoffs.
+    - Posts are recent and subreddit is active.
+  weak:
+    - Single anecdote without details.
+    - Vendor self-promotion.
+    - Deleted comments or missing context.
+failure_modes:
+  - Native search misses older or relevant posts.
+  - Threads may be opinion-heavy and technically shallow.
+  - Local tools can lose comments or fail due API changes.
+maintenance:
+  check_frequency: monthly
+  last_checked: 2026-08-09
+  known_failures:
+    - Local Reddit tools must be checked for comment-layer completeness before relying on them.
+history:
+  - date: 2026-08-09
+    task: Source Scout design
+    access_method: google_site_search
+    result_quality: high
+    feedback: Reddit is best treated as a source for hidden vocabulary, alternatives, and real-world friction.
