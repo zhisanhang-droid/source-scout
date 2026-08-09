@@ -1,0 +1,55 @@
+source_id: newsletters_tool_radars
+name: Newsletters and Tool Radars
+source_type: curated_trend_source
+status: watch
+priority: 3
+best_for:
+  - Discovering newly popular tools, directories, and emerging vocabulary.
+  - Tracking source landscape changes over time.
+  - Finding practitioner-curated lists outside search rankings.
+not_good_for:
+  - Solving urgent concrete bugs.
+  - Verifying reliability of a single tool.
+domain_fit:
+  ecommerce: 3
+  engineering: 3
+  consumer_feedback: 2
+  data_collection: 3
+  ai_tools: 4
+access_methods:
+  - method_id: curated_archive_search
+    description: Search newsletter archives and tool radars by domain and problem keywords.
+    speed: medium
+    reliability: 3
+    notes:
+      - Use to discover source candidates, not final answers.
+query_patterns:
+  - '{domain} newsletter tools'
+  - '{domain} weekly tools'
+  - '{domain} technology radar'
+  - '{domain} tool directory newsletter'
+source_discovery_patterns:
+  - '{domain} curated tools'
+  - '{domain} weekly newsletter'
+  - '{domain} radar'
+quality_signals:
+  strong:
+    - Curator has domain expertise and links to primary sources.
+    - Archive repeatedly surfaces useful new sources.
+  weak:
+    - Affiliate-heavy lists.
+    - No update cadence.
+failure_modes:
+  - Can bias toward trendy tools over durable sources.
+  - Often shallow without follow-up.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: curated_archive_search
+    result_quality: low
+    feedback: Watch source; use mainly for discovering new sources, not normal research.
+
