@@ -1,0 +1,82 @@
+sources:
+  - source_id: local_workspace
+    file: sources/local-workspace.yaml
+    priority: 5
+  - source_id: github
+    file: sources/github.yaml
+    priority: 5
+  - source_id: reddit
+    file: sources/reddit.yaml
+    priority: 5
+  - source_id: google_search
+    file: sources/google-search.yaml
+    priority: 4
+  - source_id: chrome_web_store
+    file: sources/chrome-web-store.yaml
+    priority: 4
+  - source_id: apify
+    file: sources/apify.yaml
+    priority: 4
+  - source_id: package_registries
+    file: sources/package-registries.yaml
+    priority: 4
+  - source_id: community_forums
+    file: sources/community-forums.yaml
+    priority: 4
+  - source_id: mcp_registries
+    file: sources/mcp-registries.yaml
+    priority: 4
+  - source_id: osint_directories
+    file: sources/osint-directories.yaml
+    priority: 4
+  - source_id: ai_research_agents
+    file: sources/ai-research-agents.yaml
+    priority: 4
+  - source_id: userscript_ecosystem
+    file: sources/userscript-ecosystem.yaml
+    priority: 4
+  - source_id: video_tutorials
+    file: sources/video-tutorials.yaml
+    priority: 3
+  - source_id: newsletters_tool_radars
+    file: sources/newsletters-tool-radars.yaml
+    priority: 3
+  - source_id: rapidapi_marketplaces
+    file: sources/rapidapi-marketplaces.yaml
+    priority: 3
+  - source_id: tool_directories
+    file: sources/tool-directories.yaml
+    priority: 3
+  - source_id: independent_blogs
+    file: sources/independent-blogs.yaml
+    priority: 4
+  - source_id: official_docs
+    file: sources/official-docs.yaml
+    priority: 4
+  - source_id: academic_sources
+    file: sources/academic-sources.yaml
+    priority: 3
+  - source_id: patent_databases
+    file: sources/patent-databases.yaml
+    priority: 2
+  - source_id: standards_sources
+    file: sources/standards-sources.yaml
+    priority: 4
+  - source_id: government_databases
+    file: sources/government-databases.yaml
+    priority: 3
+  - source_id: app_plugin_marketplaces
+    file: sources/app-plugin-marketplaces.yaml
+    priority: 3
+  - source_id: social_platforms
+    file: sources/social-platforms.yaml
+    priority: 3
+  - source_id: rss_alerts
+    file: sources/rss-alerts.yaml
+    priority: 2
+  - source_id: ai_tool_directories
+    file: sources/ai-tool-directories.yaml
+    priority: 3
+  - source_id: ecommerce_data_sources
+    file: sources/ecommerce-data-sources.yaml
+    priority: 5
