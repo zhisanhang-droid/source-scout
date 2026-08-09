@@ -1,0 +1,42 @@
+source_id: social_platforms
+name: Social Platforms and Creator Communities
+source_type: social_platform_source
+status: watch
+priority: 3
+best_for:
+  - Practitioner tips, emerging tools, product demos, short-form workflows, and complaints.
+not_good_for:
+  - Stable facts without corroboration.
+  - Easy automated retrieval.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 4
+  data_collection: 2
+  ai_tools: 4
+access_methods:
+  - method_id: social_search
+    description: Search public social platforms by domain hashtags, tool names, and workflow phrases.
+    speed: medium
+    reliability: 2
+    notes:
+      - Treat as lead generation, then verify elsewhere.
+query_patterns:
+  - '{tool} workaround'
+  - '{domain} tips'
+  - '{workflow} demo'
+source_discovery_patterns:
+  - '{domain} creators'
+quality_signals:
+  strong:
+    - Post links to repo, tool, template, or detailed thread.
+  weak:
+    - Viral claim with no evidence.
+failure_modes:
+  - Search is fragmented and often requires login.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
