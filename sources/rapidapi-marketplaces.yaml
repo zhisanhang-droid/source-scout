@@ -1,0 +1,56 @@
+source_id: rapidapi_marketplaces
+name: RapidAPI and API Marketplaces
+source_type: api_marketplace
+status: active
+priority: 3
+best_for:
+  - Finding packaged third-party APIs and commercialized data access.
+  - Comparing endpoint shapes, pricing, quotas, and whether demand exists.
+  - Fallback options when local collection is too costly.
+not_good_for:
+  - Hidden browser-session workarounds.
+  - Proving data freshness without testing.
+  - Avoiding vendor lock-in.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 1
+  data_collection: 4
+  ai_tools: 2
+access_methods:
+  - method_id: marketplace_search
+    description: Search API marketplaces by platform, data object, and endpoint names.
+    speed: fast
+    reliability: 3
+    notes:
+      - Use as fallback and market signal; verify with independent sources.
+query_patterns:
+  - '{platform} RapidAPI'
+  - '{platform} data API marketplace'
+  - '{platform} comments API'
+  - '{platform} trends API'
+source_discovery_patterns:
+  - '{domain} API marketplace'
+  - '{platform} third party API'
+quality_signals:
+  strong:
+    - Clear sample response includes target fields.
+    - Recent usage, pricing, limits, and status are visible.
+    - External docs or reviews confirm it works.
+  weak:
+    - Vague endpoint names.
+    - No recent activity or sample data.
+failure_modes:
+  - API may wrap the same unstable scraper.
+  - Pricing can be high relative to reliability.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: marketplace_search
+    result_quality: medium
+    feedback: Added as fallback source, not primary discovery for hidden engineering routes.
+
