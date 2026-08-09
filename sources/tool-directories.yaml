@@ -1,0 +1,54 @@
+source_id: tool_directories
+name: Product Hunt / AlternativeTo / Tool Directories
+source_type: tool_discovery_directory
+status: watch
+priority: 3
+best_for:
+  - Discovering named tools, alternatives, and adjacent product categories.
+  - Finding market vocabulary and competitor sets.
+  - Seeing whether a workflow has many commercial tools.
+not_good_for:
+  - Implementation details.
+  - Reliability proof.
+  - Low-level engineering workarounds.
+domain_fit:
+  ecommerce: 3
+  engineering: 2
+  consumer_feedback: 3
+  data_collection: 3
+  ai_tools: 4
+access_methods:
+  - method_id: directory_search
+    description: Search tool directories by problem, category, platform, and alternative terms.
+    speed: fast
+    reliability: 3
+    notes:
+      - Follow discovered tools to docs, GitHub, reviews, and communities.
+query_patterns:
+  - '{tool} alternative'
+  - '{problem} tools directory'
+  - '{domain} product hunt'
+  - '{domain} alternatives'
+source_discovery_patterns:
+  - '{domain} tool directory'
+  - '{domain} software alternatives'
+quality_signals:
+  strong:
+    - Multiple tools cluster around the same workflow.
+    - Listings link to docs, repos, and active communities.
+  weak:
+    - Affiliate lists and outdated roundups.
+failure_modes:
+  - Surfaces polished SaaS before grassroots workarounds.
+  - Reviews may be shallow or promotional.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: directory_search
+    result_quality: medium
+    feedback: Useful for tool landscape discovery, not enough for final recommendations.
+
