@@ -1,0 +1,62 @@
+source_id: osint_directories
+name: OSINT Directories and Search Playbooks
+source_type: methodology_directory
+status: watch
+priority: 4
+best_for:
+  - Discovering unfamiliar source types and search operators.
+  - Learning source triangulation and evidence discipline.
+  - Finding directories, public records, social search tools, and niche databases.
+not_good_for:
+  - Fast answers to a concrete engineering bug.
+  - Verifying whether a specific software package still works.
+domain_fit:
+  ecommerce: 3
+  engineering: 3
+  consumer_feedback: 3
+  data_collection: 4
+  ai_tools: 3
+access_methods:
+  - method_id: directory_search
+    description: Search OSINT directories and awesome lists for source categories and tools.
+    speed: medium
+    reliability: 4
+    notes:
+      - Use for source discovery, not final answer evidence.
+  - method_id: methodology_lookup
+    description: Look for search operators, triangulation workflows, and source-evaluation checklists.
+    speed: medium
+    reliability: 4
+    notes:
+      - Good for improving Source Scout process itself.
+query_patterns:
+  - 'awesome osint tools'
+  - 'OSINT source discovery methodology'
+  - 'OSINT search operators source triangulation'
+  - 'OSINT tools directory github'
+source_discovery_patterns:
+  - '{domain} OSINT tools'
+  - '{domain} public data sources'
+  - '{domain} investigation toolkit'
+quality_signals:
+  strong:
+    - Directory is curated and recently updated.
+    - Tools are categorized by source type and access method.
+    - Methodology includes verification and bias warnings.
+  weak:
+    - Huge list with no maintenance signal.
+    - Tool dump without source-use guidance.
+failure_modes:
+  - Can over-expand the search space and waste time.
+  - Many tools are security-oriented and not directly useful for ecommerce or engineering.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: directory_search
+    result_quality: medium
+    feedback: Added as a source-discovery source, not a normal problem-time source.
+
