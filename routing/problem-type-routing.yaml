@@ -1,0 +1,80 @@
+problem_types:
+  data_collection_antibot:
+    description: Data scraping, 429, captcha, login/session reuse, browser automation, or hard-to-access web data.
+    default_sources:
+      - local_workspace
+      - ecommerce_data_sources
+      - github
+      - reddit
+      - chrome_web_store
+      - userscript_ecosystem
+      - apify
+      - package_registries
+      - community_forums
+    escalation_sources:
+      - mcp_registries
+      - video_tutorials
+      - independent_blogs
+  ecommerce_sourcing_price:
+    description: Amazon, 1688, supplier quote, cost, listing, product research, or ecommerce data workflow.
+    default_sources:
+      - ecommerce_data_sources
+      - local_workspace
+      - community_forums
+      - github
+      - reddit
+      - chrome_web_store
+      - google_search
+      - official_docs
+    escalation_sources:
+      - independent_blogs
+      - video_tutorials
+      - rapidapi_marketplaces
+  ai_tool_solution_discovery:
+    description: Existing AI tools, MCP servers, agents, plugins, automation workflows, or model-assisted research.
+    default_sources:
+      - local_workspace
+      - github
+      - mcp_registries
+      - ai_research_agents
+      - package_registries
+      - tool_directories
+      - reddit
+    escalation_sources:
+      - newsletters_tool_radars
+      - independent_blogs
+      - video_tutorials
+  user_experience_feedback:
+    description: Real user complaints, product experience, tool reputation, alternatives, or community sentiment.
+    default_sources:
+      - reddit
+      - community_forums
+      - tool_directories
+      - google_search
+      - video_tutorials
+    escalation_sources:
+      - independent_blogs
+      - newsletters_tool_radars
+  official_fact_policy:
+    description: API rules, legal/policy facts, rate limits, docs, changelogs, standards, or deprecation status.
+    default_sources:
+      - official_docs
+      - google_search
+      - github
+    escalation_sources:
+      - community_forums
+      - reddit
+      - independent_blogs
+  unknown_domain_source_discovery:
+    description: New domain where Source Map coverage is uncertain.
+    default_sources:
+      - google_search
+      - osint_directories
+      - github
+      - reddit
+      - community_forums
+      - tool_directories
+    escalation_sources:
+      - newsletters_tool_radars
+      - video_tutorials
+      - ai_research_agents
