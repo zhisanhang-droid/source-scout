@@ -1,0 +1,62 @@
+source_id: ai_research_agents
+name: Open-source AI Research Agents
+source_type: research_workflow_repository
+status: watch
+priority: 4
+best_for:
+  - Discovering planner, query expansion, evidence collection, and citation workflows.
+  - Learning how research agents decompose broad questions into searches.
+  - Finding reusable evaluation ideas for answer quality.
+not_good_for:
+  - Domain-specific facts without running their workflows.
+  - Practical user feedback outside AI research tooling.
+domain_fit:
+  ecommerce: 2
+  engineering: 4
+  consumer_feedback: 1
+  data_collection: 3
+  ai_tools: 5
+access_methods:
+  - method_id: github_repo_search
+    description: Search GitHub for deep research agents, then inspect prompts, planners, and evaluation docs.
+    speed: medium
+    reliability: 4
+    notes:
+      - Extract source-discovery patterns rather than copying whole frameworks.
+  - method_id: docs_and_issues_search
+    description: Read docs and Issues for known weaknesses in search quality and source verification.
+    speed: slow
+    reliability: 4
+    notes:
+      - Issues reveal where research agents fail in practice.
+query_patterns:
+  - 'open source deep research agent github'
+  - 'AI research agent planner executor github'
+  - 'AI research agent source citations workflow'
+  - 'iterative research agent query expansion'
+source_discovery_patterns:
+  - 'awesome auto research tools'
+  - 'deep research agent github'
+  - 'research agent benchmark citations'
+quality_signals:
+  strong:
+    - Prompts or code expose source routing and verification steps.
+    - Issues discuss shallow search, hallucinated citations, or source coverage.
+    - Project has recent maintenance and real examples.
+  weak:
+    - Demo app with no reproducible workflow.
+    - Marketing claims without source logs.
+failure_modes:
+  - May optimize for academic reports instead of engineering source discovery.
+  - Can add complexity without improving source selection.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: github_repo_search
+    result_quality: medium
+    feedback: Useful for improving Source Scout process and evaluation criteria.
+
