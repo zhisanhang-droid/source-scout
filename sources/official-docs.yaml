@@ -1,0 +1,55 @@
+source_id: official_docs
+name: Official Docs and Developer Changelogs
+source_type: primary_official_source
+status: active
+priority: 4
+best_for:
+  - Confirming official rules, APIs, limits, policy, auth, and changelog facts.
+  - Checking whether a feature exists or was deprecated.
+  - Anchoring factual claims before using community workarounds.
+not_good_for:
+  - Hidden unofficial workarounds.
+  - Real-world reliability under anti-bot pressure.
+  - User frustration and practical failure cases.
+domain_fit:
+  ecommerce: 4
+  engineering: 4
+  consumer_feedback: 1
+  data_collection: 3
+  ai_tools: 4
+access_methods:
+  - method_id: official_search
+    description: Search official docs, developer portals, changelogs, and status pages first for rule facts.
+    speed: fast
+    reliability: 5
+    notes:
+      - Pair with community sources to see whether official route works in practice.
+query_patterns:
+  - 'site:{official_domain} "{feature}"'
+  - '{platform} developer docs {feature}'
+  - '{platform} changelog {api}'
+  - '{platform} rate limit docs'
+source_discovery_patterns:
+  - '{platform} developer portal'
+  - '{platform} API changelog'
+quality_signals:
+  strong:
+    - Official docs are current and include changelog dates.
+    - Limits, auth scopes, and terms are explicit.
+  weak:
+    - Alpha/beta docs without usage examples.
+    - Marketing pages without API details.
+failure_modes:
+  - Official path may be impractical or unavailable.
+  - Docs can omit anti-abuse behavior and undocumented limits.
+maintenance:
+  check_frequency: monthly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: official_search
+    result_quality: high
+    feedback: Needed for fact grounding, but must not dominate solution discovery.
+
