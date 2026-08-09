@@ -1,0 +1,55 @@
+source_id: apify
+name: Apify
+source_type: actor_marketplace
+status: active
+priority: 4
+best_for:
+  - Seeing whether a scraping/data workflow is commercially packaged.
+  - Finding actor implementation clues, fields, limits, and pricing expectations.
+  - Fallback data acquisition when local collection is costly.
+not_good_for:
+  - Low-cost high-control infrastructure.
+  - Confirming custom edge cases without testing.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 2
+  data_collection: 5
+  ai_tools: 3
+access_methods:
+  - method_id: marketplace_search
+    description: Search Apify actors by platform, data type, and target workflow.
+    speed: fast
+    reliability: 4
+    notes:
+      - Check last modified date, runs, input schema, output schema, and reviews.
+query_patterns:
+  - '{platform} scraper Apify'
+  - '{platform} trends Apify actor'
+  - '{platform} comments Apify actor'
+  - '{platform} product data Apify'
+source_discovery_patterns:
+  - '{domain} actor marketplace'
+  - '{platform} scraping actor'
+quality_signals:
+  strong:
+    - Actor has recent runs and maintained input/output schema.
+    - Sample output contains target fields.
+    - Pricing and limits are explicit.
+  weak:
+    - Clone actors with no reviews.
+    - Outdated last run.
+failure_modes:
+  - Actors may work for generic pages but fail on logged-in or high-friction flows.
+  - Vendor docs may understate blocking risk.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout design
+    access_method: marketplace_search
+    result_quality: medium
+    feedback: Good fallback and demand signal, not automatically the best primary solution.
+
