@@ -1,0 +1,37 @@
+surface_id: string
+parent_source: source_id
+name: string
+access_type: web_search | native_search | api | cli | local_tool | marketplace_search | code_search | issue_search | comments | directory | rss | video | manual
+status: active | watch | stale | blocked | deprecated | needs_validation
+priority: 1-5
+login_required: none | optional | required | unknown
+automation_level: manual | semi_automated | automated | unknown
+best_for:
+  - string
+not_good_for:
+  - string
+entry_points:
+  - string
+query_templates:
+  - string
+retrieval_depth:
+  title: yes | no | partial | unknown
+  snippet: yes | no | partial | unknown
+  body: yes | no | partial | unknown
+  comments: yes | no | partial | unknown
+  metadata: yes | no | partial | unknown
+validation:
+  last_checked: YYYY-MM-DD
+  method: string
+  success_criteria:
+    - string
+  failure_signals:
+    - string
+fallback_surfaces:
+  - surface_id
+history:
+  - date: YYYY-MM-DD
+    task: string
+    result_quality: high | medium | low | stale | blocked
+    feedback: string
+
