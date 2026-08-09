@@ -1,0 +1,44 @@
+source_id: app_plugin_marketplaces
+name: App and Plugin Marketplaces
+source_type: app_plugin_marketplace
+status: watch
+priority: 3
+best_for:
+  - Commercialized workflow discovery across Shopify, WordPress, Figma, browser, and SaaS integration ecosystems.
+  - Demand signal and workflow vocabulary.
+not_good_for:
+  - Open-source implementation details.
+  - Reliability without reviews/testing.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 3
+  data_collection: 3
+  ai_tools: 3
+access_methods:
+  - method_id: marketplace_search
+    description: Search app/plugin marketplaces by platform, workflow, data type, and integration terms.
+    speed: medium
+    reliability: 3
+    notes:
+      - Follow listings to docs, reviews, and support forums.
+query_patterns:
+  - '{platform} app marketplace {workflow}'
+  - '{workflow} plugin'
+  - '{platform} integration marketplace'
+source_discovery_patterns:
+  - '{domain} app store'
+quality_signals:
+  strong:
+    - Recent reviews mention the target workflow.
+    - Listing has docs, support, changelog, and clear permissions.
+  weak:
+    - Vague listing or no reviews.
+failure_modes:
+  - Marketplaces favor commercial polished tools over grassroots solutions.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
