@@ -1,0 +1,42 @@
+source_id: government_databases
+name: Government and Public Databases
+source_type: public_database
+status: active
+priority: 3
+best_for:
+  - Official public records, recalls, import/export data, safety notices, and regulatory facts.
+not_good_for:
+  - Informal engineering workarounds.
+  - Fast community feedback.
+domain_fit:
+  ecommerce: 4
+  engineering: 2
+  consumer_feedback: 1
+  data_collection: 3
+  ai_tools: 1
+access_methods:
+  - method_id: public_database_search
+    description: Search government and public databases by product, company, standard, or incident term.
+    speed: medium
+    reliability: 5
+    notes:
+      - Use official data as fact anchor, then cross-check with community sources.
+query_patterns:
+  - '{product} recall database'
+  - '{company} import records'
+  - '{category} public database'
+source_discovery_patterns:
+  - '{domain} government database'
+quality_signals:
+  strong:
+    - Official database record with date and identifier.
+  weak:
+    - Aggregator without original record.
+failure_modes:
+  - Database search UX may be poor or rate-limited.
+maintenance:
+  check_frequency: monthly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
