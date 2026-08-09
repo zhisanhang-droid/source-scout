@@ -1,0 +1,44 @@
+source_id: patent_databases
+name: Patent Databases
+source_type: patent_database
+status: watch
+priority: 2
+best_for:
+  - Product mechanism discovery, design alternatives, and prior art.
+  - Finding manufacturers or assignees around a product concept.
+not_good_for:
+  - User demand.
+  - Working software tools.
+  - Fast operational answers.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 1
+  data_collection: 1
+  ai_tools: 1
+access_methods:
+  - method_id: patent_search
+    description: Search patent databases by product function, mechanism, assignee, and CPC/IPC class.
+    speed: slow
+    reliability: 3
+    notes:
+      - Useful for product research and avoiding obvious prior-art blind spots.
+query_patterns:
+  - '{product} patent'
+  - '{mechanism} patent'
+  - '{assignee} {product} patent'
+source_discovery_patterns:
+  - '{product} CPC patent class'
+quality_signals:
+  strong:
+    - Patent includes diagrams and claims that match product mechanism.
+  weak:
+    - Broad unrelated patent family.
+failure_modes:
+  - Dense legal language and many irrelevant results.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
