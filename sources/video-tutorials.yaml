@@ -1,0 +1,63 @@
+source_id: video_tutorials
+name: YouTube / Bilibili Video Tutorials
+source_type: video_tutorial_platform
+status: watch
+priority: 3
+best_for:
+  - Seeing end-to-end workflows and current UI operations.
+  - Finding practitioner toolchains not documented in text.
+  - Discovering vocabulary, adjacent tools, and manual workarounds.
+not_good_for:
+  - Fast source extraction.
+  - Precise citations without transcript review.
+  - Verifying maintainability.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 2
+  data_collection: 3
+  ai_tools: 4
+access_methods:
+  - method_id: video_search
+    description: Search videos by workflow, platform, and error, then inspect transcript or chapters first.
+    speed: slow
+    reliability: 3
+    notes:
+      - Use when text sources miss hands-on workflows.
+  - method_id: transcript_scan
+    description: Search transcript text for tool names, commands, and source references.
+    speed: medium
+    reliability: 3
+    notes:
+      - Prefer videos with clear timestamps and linked resources.
+query_patterns:
+  - '{platform} scraping tutorial'
+  - '{platform} automation workflow'
+  - '{platform} data export tutorial'
+  - '{tool} setup walkthrough'
+source_discovery_patterns:
+  - '{domain} YouTube tutorial'
+  - '{domain} Bilibili tutorial'
+  - '{platform} workflow video'
+quality_signals:
+  strong:
+    - Video shows the exact workflow on screen.
+    - Links include repo, docs, or templates.
+    - Recent upload and active comments.
+  weak:
+    - No transcript or links.
+    - Pure overview or promotional content.
+failure_modes:
+  - Slow to inspect.
+  - UI workflows may be outdated.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: video_search
+    result_quality: medium
+    feedback: Useful as a fallback for hidden operational workflows.
+
