@@ -1,0 +1,63 @@
+source_id: chrome_web_store
+name: Chrome Web Store
+source_type: browser_extension_marketplace
+status: active
+priority: 4
+best_for:
+  - Discovering browser-extension-shaped solutions.
+  - Validating whether a workflow has user demand.
+  - Finding UI-level data extraction tools, exporters, scrapers, and session-based helpers.
+not_good_for:
+  - Code transparency.
+  - Long-term reliability proof.
+  - Server-side API details.
+domain_fit:
+  ecommerce: 4
+  engineering: 3
+  consumer_feedback: 3
+  data_collection: 5
+  ai_tools: 3
+access_methods:
+  - method_id: store_search
+    description: Search extension names and categories with platform, exporter, scraper, helper, automation, and data terms.
+    speed: fast
+    reliability: 3
+    notes:
+      - Store search can be weak; combine with web search site operators.
+  - method_id: web_site_search
+    description: Use web search against chromewebstore.google.com.
+    speed: fast
+    reliability: 4
+    notes:
+      - Better for exact terms and old listings.
+query_patterns:
+  - 'site:chromewebstore.google.com "{platform}" scraper'
+  - 'site:chromewebstore.google.com "{platform}" exporter'
+  - 'site:chromewebstore.google.com "{platform}" data'
+  - 'site:chromewebstore.google.com "{problem}" extension'
+source_discovery_patterns:
+  - '{platform} chrome extension scraper'
+  - '{platform} browser extension exporter'
+quality_signals:
+  strong:
+    - Recent reviews mention the target workflow.
+    - Large install count plus recent updates.
+    - Extension permissions match claimed functionality.
+  weak:
+    - No recent reviews.
+    - Vague marketing copy.
+    - Requires undisclosed cloud service.
+failure_modes:
+  - Store listings do not expose source code.
+  - Extensions may break after website UI changes.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout design
+    access_method: web_site_search
+    result_quality: medium
+    feedback: Important for detecting extension-shaped routes that API-first search misses.
+
