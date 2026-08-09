@@ -1,0 +1,56 @@
+source_id: independent_blogs
+name: Independent Developer Blogs
+source_type: practitioner_blog
+status: active
+priority: 4
+best_for:
+  - Deep implementation writeups, postmortems, and non-obvious tradeoffs.
+  - Discovering exact commands, architecture sketches, and failure analysis.
+  - Finding vocabulary and linked primary sources.
+not_good_for:
+  - Broad consensus by itself.
+  - Current status unless the post is recent or maintained.
+domain_fit:
+  ecommerce: 3
+  engineering: 5
+  consumer_feedback: 2
+  data_collection: 4
+  ai_tools: 4
+access_methods:
+  - method_id: web_search_with_terms
+    description: Search web for problem plus writeup, postmortem, case study, architecture, and workaround terms.
+    speed: medium
+    reliability: 4
+    notes:
+      - Prioritize posts with code, dates, and linked repos.
+query_patterns:
+  - '"{problem}" "writeup"'
+  - '"{platform}" "{problem}" "postmortem"'
+  - '"{platform}" "{problem}" "case study"'
+  - '"{platform}" "{problem}" "architecture"'
+  - '"{platform}" "{problem}" "workaround"'
+source_discovery_patterns:
+  - '{domain} developer blog'
+  - '{platform} engineering blog workaround'
+quality_signals:
+  strong:
+    - Specific environment, commands, errors, and outcomes.
+    - Links to repo, issue, docs, or dataset.
+    - Author responds to comments or updates the post.
+  weak:
+    - Generic tutorial with no failure cases.
+    - Undated content.
+failure_modes:
+  - Single-author bias.
+  - May be outdated after platform changes.
+maintenance:
+  check_frequency: quarterly
+  last_checked: 2026-08-09
+  known_failures: []
+history:
+  - date: 2026-08-09
+    task: Source Scout expansion
+    access_method: web_search_with_terms
+    result_quality: high
+    feedback: Added for deep engineering lessons that are not in forums or docs.
+
