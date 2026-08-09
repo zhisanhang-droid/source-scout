@@ -1,0 +1,26 @@
+source_id:
+name:
+source_type:
+status: active
+priority:
+best_for: []
+not_good_for: []
+domain_fit:
+  ecommerce:
+  engineering:
+  consumer_feedback:
+  data_collection:
+  ai_tools:
+access_methods: []
+query_patterns: []
+source_discovery_patterns: []
+quality_signals:
+  strong: []
+  weak: []
+failure_modes: []
+maintenance:
+  check_frequency:
+  last_checked:
+  known_failures: []
+history: []
+
