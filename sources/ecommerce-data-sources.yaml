@@ -1,0 +1,46 @@
+source_id: ecommerce_data_sources
+name: Ecommerce Data and Marketplace Sources
+source_type: ecommerce_marketplace_source
+status: active
+priority: 5
+best_for:
+  - Amazon category, listing, review, keyword, and competitor evidence.
+  - 1688/Alibaba supplier, cost, and product implementation clues.
+  - Marketplace-backed validation for product research and sourcing decisions.
+not_good_for:
+  - General engineering workaround discovery.
+  - Official API policy unless paired with official docs.
+domain_fit:
+  ecommerce: 5
+  engineering: 2
+  consumer_feedback: 4
+  data_collection: 4
+  ai_tools: 1
+access_methods:
+  - method_id: marketplace_search
+    description: Search ecommerce marketplaces and local ecommerce tools by product, keyword, ASIN, supplier term, and category.
+    speed: medium
+    reliability: 4
+    notes:
+      - Prefer local validated tools and Sorftime for Amazon product research when available.
+query_patterns:
+  - '{keyword} Amazon'
+  - '{asin}'
+  - '{product} 1688'
+  - '{supplier_keyword} Alibaba'
+source_discovery_patterns:
+  - '{category} Amazon competitors'
+  - '{product} 1688 source factory'
+quality_signals:
+  strong:
+    - Marketplace page, review data, price/offer page, or local tool output is current and specific.
+  weak:
+    - Generic SEO marketplace copy or stale cached page.
+failure_modes:
+  - Login, region, anti-bot, and incomplete review/comment data.
+maintenance:
+  check_frequency: monthly
+  last_checked: 2026-08-09
+  known_failures: []
+history: []
+
