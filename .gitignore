@@ -1,0 +1,25 @@
+# Runtime and local validation outputs
+validation/*.jsonl
+maintenance/*.md
+logs/*.md
+exports/*.md
+
+# Keep directory docs/templates if added later
+!validation/README.md
+!maintenance/README.md
+!logs/README.md
+!exports/README.md
+
+# Local/editor/cache files
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Local scratch payloads
+.tmp*/
+tmp/
