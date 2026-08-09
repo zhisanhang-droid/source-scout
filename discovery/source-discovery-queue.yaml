@@ -1,0 +1,120 @@
+candidates:
+  - candidate_id: osint_tool_directories
+    name: OSINT tool directories and search playbooks
+    status: promoted
+    why_it_matters: Mature source-discovery methods already exist in OSINT communities.
+    discovery_queries:
+      - 'awesome osint tools'
+      - 'OSINT search methodology source triangulation'
+      - 'OSINT tools directory github'
+    expected_fit:
+      - source discovery
+      - search operators
+      - source reliability
+    next_action: Added source card osint_directories; later validate which directories are worth naming explicitly.
+  - candidate_id: ai_research_agent_repos
+    name: Open-source deep research agents
+    status: promoted
+    why_it_matters: They contain planner/search/verification workflows that may improve Source Scout.
+    discovery_queries:
+      - 'open source deep research agent github'
+      - 'AI research agent source citations workflow'
+      - 'planner executor research agent github'
+    expected_fit:
+      - research workflow
+      - query expansion
+      - evidence verification
+    next_action: Added source card ai_research_agents; later inspect specific repos for reusable workflow patterns.
+  - candidate_id: discord_telegram_communities
+    name: Discord and Telegram communities
+    status: queued
+    why_it_matters: Some engineering and scraping knowledge is not indexed on the public web.
+    discovery_queries:
+      - '{domain} Discord community'
+      - '{domain} Telegram group'
+      - '{tool} Discord support'
+    expected_fit:
+      - fast-moving tools
+      - private or semi-private practitioner knowledge
+    next_action: Define when these are worth using and how to access them without wasting time.
+  - candidate_id: newsletters_and_tool_radars
+    name: Newsletters and tool radars
+    status: promoted
+    why_it_matters: Useful for discovering new tools, marketplaces, and practitioner vocabulary.
+    discovery_queries:
+      - '{domain} newsletter tools'
+      - '{domain} weekly tools'
+      - '{domain} technology radar'
+    expected_fit:
+      - new source discovery
+      - trend and tool landscape
+    next_action: Added source card newsletters_tool_radars; keep as watch until it proves unique value.
+  - candidate_id: userscript_repositories
+    name: Userscript repositories
+    status: promoted
+    why_it_matters: Browser-level hacks often appear as Tampermonkey scripts before formal extensions.
+    discovery_queries:
+      - '{platform} userscript'
+      - '{platform} tampermonkey'
+      - '{platform} greasyfork'
+    expected_fit:
+      - browser automation
+      - logged-in web workflows
+      - lightweight MVPs
+    next_action: Added source card userscript_ecosystem; validate with real scraping/browser tasks.
+  - candidate_id: vertical_databases
+    name: Vertical databases and niche directories
+    status: queued
+    why_it_matters: Some domains have specialized databases that general search misses.
+    discovery_queries:
+      - '{domain} database'
+      - '{domain} directory'
+      - '{domain} dataset'
+      - '{domain} registry'
+    expected_fit:
+      - market research
+      - product discovery
+      - specialized factual data
+    next_action: Identify which vertical databases matter for ecommerce, sourcing, compliance, and AI tools.
+  - candidate_id: modern_search_products
+    name: Modern search and answer engines
+    status: queued
+    why_it_matters: Search products such as Kagi, Perplexity, You.com, Phind, or Exa may expose different indexes and retrieval modes.
+    discovery_queries:
+      - 'developer search engine github issues'
+      - 'AI search engine source discovery'
+      - 'Exa search API developer research'
+      - 'Kagi search developer research'
+    expected_fit:
+      - source discovery
+      - alternate search indexes
+      - technical research
+    next_action: Decide whether to add a source card for search products or keep them as access methods under web search.
+  - candidate_id: academic_and_institutional_sources
+    name: Academic and institutional sources
+    status: queued
+    why_it_matters: Some problems need papers, standards, government databases, or institutional reports rather than communities.
+    discovery_queries:
+      - '{domain} research paper'
+      - '{domain} standard'
+      - '{domain} government database'
+      - '{domain} industry report'
+    expected_fit:
+      - factual grounding
+      - standards
+      - market and safety research
+    next_action: Split into source cards only when a domain needs it.
+  - candidate_id: app_and_plugin_marketplaces
+    name: App stores and plugin marketplaces
+    status: queued
+    why_it_matters: Many practical workflows appear as Shopify apps, WordPress plugins, Figma plugins, browser add-ons, or SaaS integrations.
+    discovery_queries:
+      - '{platform} plugin marketplace'
+      - '{domain} app store'
+      - '{workflow} plugin'
+      - '{workflow} integration marketplace'
+    expected_fit:
+      - commercialized workflows
+      - demand signal
+      - integration options
+    next_action: Decide whether Chrome Web Store is enough or marketplace-specific cards are needed.
